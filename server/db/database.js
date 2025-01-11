@@ -80,7 +80,7 @@ const addItemEntry = async (ctlNo, processType, addressNo,quantity, user) => {
 
 const getRackList = async (addressNo) => {
   const [rows] = await pool.query(
-    "SELECT  * FROM `tbl_seiren_actual_arrive` WHERE AddressNo = ? AND Balance != 0",
+    "SELECT  * FROM `tbl_seiren_actual_arrive` WHERE CTLNO = ? ",
     [addressNo]
   );
 
