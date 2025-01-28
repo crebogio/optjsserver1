@@ -62,7 +62,7 @@ const getProductsList = async (barcode) => {
 
 const getIncomingList = async (barcode) => {
   const [rows] = await pool.query(
-    "SELECT  * FROM `tbl_seiren_cmchem_incomming` WHERE CTLNO = ?",
+    "SELECT  * FROM `tbl_seiren_fifotag` WHERE Recordnum = ?",
     [barcode]
   );
 
