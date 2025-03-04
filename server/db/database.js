@@ -62,7 +62,7 @@ const getProductsList = async (barcode) => {
 
 const getIncomingList = async (barcode) => {
   const [rows] = await pool.query(
-    "SELECT  * FROM `tbl_seiren_fifotag` WHERE Recordnum = ?",
+    "SELECT  * FROM (SELECT * FROM tbl_seiren_fifotag WHERE NOT EXISTS(SELECT opt_ctech_merge_table.CTLNO FROM opt_ctech_merge_table WHERE tbl_seiren_fifotag.Recordnum=opt_ctech_merge_table.CTLNO)) AS a WHERE a.Recordnum = ?",
     [barcode]
   );
 
