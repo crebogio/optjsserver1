@@ -69,6 +69,24 @@ const getIncomingList = async (barcode) => {
   return rows;
 };
 
+const checkRackV1 = async (inRackNo,inCode) => {
+  const [rows] = await pool.query(
+    "SELECT * FROM (SELECT  * FROM tbl_seiren_actual_arrive WHERE (tbl_seiren_actual_arrive.AddressNo = ? AND tbl_seiren_actual_arrive.Balance != 0 AND EXISTS (SELECT * FROM tbl_seiren_rackmasterlist WHERE tbl_seiren_rackmasterlist.rack_addressno = ?)))AS a WHERE (a.Code = ?)",
+    [inRackNo,inRackNo,inCode]
+  );
+  return rows;
+};
+
+const checkRackV2 = async (inRackNo,inCode) => {
+  const [rows] = await pool.query(
+    "SELECT * FROM tbl_seiren_rackmasterlist WHERE (tbl_seiren_rackmasterlist.rack_addressno = ? AND (NOT EXISTS (SELECT * FROM tbl_seiren_actual_arrive WHERE tbl_seiren_actual_arrive.AddressNo = ?) OR (NOT EXISTS(SELECT * FROM tbl_seiren_actual_arrive WHERE tbl_seiren_actual_arrive.AddressNo= ? AND tbl_seiren_actual_arrive.balance != 0))))",
+    [inRackNo,inRackNo,inRackNo]
+  );
+  return rows;
+};
+
+
+
 const addItemEntry = async (ctlNo, processType, addressNo,quantity, user) => {
   const [rows] = await pool.query(
     "INSERT INTO `opt_ctech_merge_table` (`CTLNO`, `processType`, `AddressNo`, `quantity`,`user`) VALUES (?,?,?,?,?)",
