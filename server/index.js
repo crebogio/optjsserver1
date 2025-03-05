@@ -10,6 +10,7 @@ const productsListNoAuthRouter = require("./routes/productsListNoAuth");
 const checkIncomingNoAuthRouter = require("./routes/checkIncomingNoAuth");
 const insertItemEntryNoAuthRouter = require("./routes/insertItemEntryNoAuth");
 const checkRackNoAuthRouter = require("./routes/checkRackNoAuth");
+const checkValidRackRouter = require("./routes/checkValidRackAssignment");
 require("express-async-errors");
 require("dotenv").config();
 
@@ -32,6 +33,7 @@ app.use("/api/v1/products-list-no-auth", productsListNoAuthRouter);
 app.use("/api/v1/check-incoming-no-auth", checkIncomingNoAuthRouter);
 app.use("/api/v1/insert-item-entry-no-auth", insertItemEntryNoAuthRouter);
 app.use("/api/v1/check-rack-no-auth", checkRackNoAuthRouter);
+app.use("/api/v1/checkvalidrackassignment", checkValidRackRouter);
 app.use(notFound);
 app.use(errorHandler);
 

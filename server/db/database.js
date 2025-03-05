@@ -77,7 +77,7 @@ const checkRackV1 = async (inRackNo,inCode) => {
   return rows;
 };
 
-const checkRackV2 = async (inRackNo,inCode) => {
+const checkRackV2 = async (inRackNo) => {
   const [rows] = await pool.query(
     "SELECT * FROM tbl_seiren_rackmasterlist WHERE (tbl_seiren_rackmasterlist.rack_addressno = ? AND (NOT EXISTS (SELECT * FROM tbl_seiren_actual_arrive WHERE tbl_seiren_actual_arrive.AddressNo = ?) OR (NOT EXISTS(SELECT * FROM tbl_seiren_actual_arrive WHERE tbl_seiren_actual_arrive.AddressNo= ? AND tbl_seiren_actual_arrive.balance != 0))))",
     [inRackNo,inRackNo,inRackNo]
@@ -114,5 +114,7 @@ module.exports = {
   getProductsList,
   getIncomingList,
   addItemEntry,
-  getRackList
+  getRackList,
+  checkRackV1,
+  checkRackV2
 };
