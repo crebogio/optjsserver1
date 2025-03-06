@@ -8,7 +8,7 @@ const checkRackM = async (req, res) => {
   const { rack,itemno} = req.params;
   const isRackOccupiedByItem = await checkRackV1(rack,itemno);
   const isRackEmpty = await checkRackV2(rack);
-
+//hello
   
   if (isRackEmpty.length === 1) {
     res.status(200).json({status: 200,message:'Rack Empty'});
