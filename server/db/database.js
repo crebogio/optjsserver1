@@ -87,10 +87,10 @@ const checkRackV2 = async (inRackNo) => {
 
 
 
-const addItemEntry = async (ctlNo, processType, addressNo,quantity, user) => {
+const addItemEntry = async (ctlNo, processType, addressNo,quantity, user, destination, comments) => {
   const [rows] = await pool.query(
-    "INSERT INTO `opt_ctech_merge_table` (`CTLNO`, `processType`, `AddressNo`, `quantity`,`user`) VALUES (?,?,?,?,?)",
-    [ctlNo, processType, addressNo,quantity, user]
+    "INSERT INTO `opt_ctech_merge_table` (`CTLNO`, `processType`, `AddressNo`, `quantity`,`user`,`destination`,`comments`) VALUES (?,?,?,?,?,?,?)",
+    [ctlNo, processType, addressNo,quantity, user, destination, comments ]
   );
 
   return rows;
