@@ -16,6 +16,7 @@ const addProductStat = async (req, res) => {
   const { username } = await getUserWithIdOf(req.user);
   const productStat = await addProduct(barcode, type, sub_type, username);
   res.status(200).json({ message: "product stat", productStat });
+  
 };
 
 module.exports = { addProductStat };
