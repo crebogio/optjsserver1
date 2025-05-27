@@ -14,7 +14,7 @@ const checkRackM = async (req, res) => {
     res.status(200).json({status: 200,message:'Rack Empty'});
   }
   else{
-    if (isRackOccupiedByItem.length == 1) {
+    if (isRackOccupiedByItem.length === 1) {
       res.status(200).json({status: 200,message:'Occupied by same item'});
     }
     else{
