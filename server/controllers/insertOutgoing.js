@@ -1,20 +1,27 @@
 
-const { entryOutgoing, entryLogs, deleteWIP, checkWIP} = require("../db/database");
+const { entryOutgoing, entryLogs, deleteWIP, checkWIP,checkUser} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const insertOutgoing = async (req, res) => {
    const { process, user, machine, transNum, transNumBatch, results, weight} = req.body; 
 
    const validity =  await checkWIP(transNum,transNumBatch);
-   if(validity.length === 0){
-      res.status(200).json({status: 200,message:'Invalid'}); 
+   const isUserValid = await checkUser(user);
+
+   if (isUserValid.length > 0) {
+      if(validity.length === 0){
+         res.status(200).json({error:'Invalid not found in WIP'}); 
+      }
+      else{
+         const deletedEntry = await deleteWIP(transNum,transNumBatch);
+         const itemEntry = await entryOutgoing(process,user, machine, transNum,transNumBatch,results,weight);
+         const logEntry = await entryLogs("Outgoing", process,user, machine, transNum,transNumBatch,results,weight);
+         res.status(200).json({message:'Valid'}); 
+      }
    }
    else{
-      const deletedEntry = await deleteWIP(transNum,transNumBatch);
-      const itemEntry = await entryOutgoing(process,user, machine, transNum,transNumBatch,results,weight);
-      const logEntry = await entryLogs("Outgoing", process,user, machine, transNum,transNumBatch,results,weight);
-      res.status(200).json({status: 200,message:'Valid'}); 
-     }
+      res.status(200).json({error:'Invalid User'});
+   }  
 };
 
 module.exports = { insertOutgoing };

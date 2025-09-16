@@ -1,21 +1,34 @@
 // insert rolling and cutting
 
-const { checkSeirenOutgoingType2, deleteOutgoing, entryWIP, entryLogs} = require("../db/database");
+const { checkSeirenOutgoingType2, deleteOutgoing, entryWIP, entryLogs,checkUser,checkMachine} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const inType2 = async (req, res) => {
   const { process, user, machine, transNum, transNumBatch  } = req.body;
   
   const isTransNumInWIP = await checkSeirenOutgoingType2(transNumBatch);
+  const isUserValid = await checkUser(user);
+  const isMachineValid = await checkMachine(machine);
 
-  if (isTransNumInWIP.length !== 0) {
-    const deletedEntry = await deleteOutgoing(transNum, transNumBatch)
-    const itemEntry = await entryWIP(process,user, machine, transNum,transNumBatch);
-    const logEntry = await entryLogs("WIP", process, user, machine, transNum,transNumBatch, "N/A", "0.0");
-    res.status(200).json({status: 200,message:'Valid'}); 
+
+  if (isUserValid.length > 0) {
+    if (isMachineValid.length > 0) {
+        if (isTransNumInWIP.length !== 0) {
+          const deletedEntry = await deleteOutgoing(transNum, transNumBatch)
+          const itemEntry = await entryWIP(process,user, machine, transNum,transNumBatch);
+          const logEntry = await entryLogs("WIP", process, user, machine, transNum,transNumBatch, "N/A", "0.0");
+          res.status(200).json({message:'Valid'}); 
+        }
+        else{
+          res.status(200).json({error:'not good or missing in ongoing table'});
+        }  
+    }
+    else{
+        res.status(200).json({error:'Invalid Machine'});
+    }
   }
   else{
-    res.status(200).json({status: 200,message:'Invalid'});
+    res.status(200).json({error:'Invalid User'});
   }  
 }
 
