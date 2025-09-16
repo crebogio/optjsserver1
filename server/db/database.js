@@ -105,6 +105,103 @@ const getRackList = async (addressNo) => {
   return rows;
 };
 
+// checks validity of user ID, machine ID, and record ID
+const checkInputs = async(user_ID, machine_number, item_number) => {
+  const [exists] = await pool.query(
+    "SELECT EXISTS (SELECT 1 FROM `tbl_seiren_test_users` WHERE ID = ?) AND EXISTS (SELECT 1 FROM `tbl_seiren_test_machine` WHERE ID = ?) AND EXISTS (SELECT 1 FROM `tbl_seiren_daily_sched` WHERE RecordID = ?)",
+    [user_ID, machine_number, item_number]
+  )
+  
+  const rows = Object.values(exists[0])[0];
+
+  return rows
+}
+
+// Logs all changes on the WIP and outgoing tables
+const entryLogs = async(direction, process,user, machine, transNum,transNumBatch,status,weight) => {
+  const[rows] = await pool.query(
+    "INSERT INTO `opt_ctech_seiren_logs` (`direction`, `Process`, `UserID`, `MachineNum`, `TransNum`, `TransNumBatch`, `Status`, `KGperBuckets`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    [direction, process,user, machine, transNum,transNumBatch,status,weight]
+  );
+
+  return rows
+}
+
+// adds to WIP table
+const entryWIP = async (process,user, machine, transNum,transNumBatch) => {
+  const [rows] = await pool.query(
+    "INSERT INTO `opt_ctech_seiren_WIP` (`Process`, `UserID`, `MachineNumber`,`TransNum`, `TransNumBatch`) VALUES (?,?,?,?,?)",
+    [process,user, machine, transNum,transNumBatch]
+  );
+
+  return rows
+}
+
+const checkSeirenPlan = async (transNum) => {
+  const [rows] = await pool.query(
+    "SELECT * FROM tbl_seiren_daily_sched_control a WHERE (a.Trans_Num = ?)",
+    [transNum]
+  );
+  return rows;
+};
+const checkSeirenWIP = async (transNum) => {
+  const [rows] = await pool.query(
+    "SELECT * FROM opt_ctech_seiren_WIP a WHERE (a.TransNum = ?)",
+    [transNum]
+  );
+  return rows;
+};
+const checkMachine = async (machineVal) => {
+  const [rows] = await pool.query(
+    "SELECT * FROM tbl_seikei_all_machine_list a WHERE (a.machinenum = ?)",
+    [machineVal]
+  );
+  return rows;
+};
+const checkUser = async (idVal) => {
+  const [rows] = await pool.query(
+    "SELECT * FROM tboperatorlist a WHERE (a.id = ?)",
+    [idVal]
+  );
+  return rows;
+};
+
+
+const entryOutgoing = async (process,user, machine, transNum,transNumBatch,results,weight) => {
+  const [rows] = await pool.query(
+    "INSERT INTO `opt_ctech_seiren_outgoing` (`PrevProcess`, `UserID`, `MachineNumber`, `TransNum`,`TransNumBatch`,`Status`,`KGperBuckets`) VALUES (?,?,?,?,?,?,?)",
+    [process,user, machine, transNum,transNumBatch,results,weight]
+  );
+
+  return rows
+}
+
+const deleteWIP = async(transNum,transNumBatch) => {
+  const[rows] = await pool.query(
+    "DELETE FROM `opt_ctech_seiren_WIP` WHERE `TransNum` = ? AND `TransNumBatch` = ? LIMIT 1",
+    [transNum,transNumBatch]
+  );
+
+  return rows
+}
+
+const checkWIP = async(transNum,transNumBatch) => {
+  const[rows] = await pool.query(
+    "SELECT 1 FROM `opt_ctech_seiren_WIP` WHERE `TransNum` = ? AND `TransNumBatch` = ? ",
+    [transNum,transNumBatch]
+  );
+  return rows
+}
+
+// const checkSeirenUserMachine = async (inRackNo) => {
+//   const [rows] = await pool.query(
+//     "SELECT * FROM tbl_seiren_rackmasterlist WHERE (tbl_seiren_rackmasterlist.rack_addressno = ? AND (NOT EXISTS (SELECT * FROM tbl_seiren_actual_arrive WHERE tbl_seiren_actual_arrive.AddressNo = ?) OR (NOT EXISTS(SELECT * FROM tbl_seiren_actual_arrive WHERE tbl_seiren_actual_arrive.AddressNo= ? AND tbl_seiren_actual_arrive.balance != 0))))",
+//     [inRackNo,inRackNo,inRackNo]
+//   );
+//   return rows;
+// };
+
+
 module.exports = {
   getRacks,
   getRack,
@@ -116,5 +213,16 @@ module.exports = {
   addItemEntry,
   getRackList,
   checkRackV1,
-  checkRackV2
+  checkRackV2,
+  checkInputs,
+  entryLogs,
+  entryWIP,
+  checkSeirenPlan,
+  checkSeirenWIP,
+  checkMachine,
+  checkUser,
+  entryOutgoing,
+  deleteWIP,
+  checkWIP
+  //checkSeirenUserMachine,
 };
