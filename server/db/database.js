@@ -139,11 +139,12 @@ const entryWIP = async (process,user, machine, transNum,transNumBatch) => {
 
 const checkSeirenPlan = async (transNum) => {
   const [rows] = await pool.query(
-    "SELECT * FROM tbl_seiren_daily_sched_control a WHERE (a.Trans_Num = ?)",
+    "SELECT * FROM tbl_seiren_daily_sched_control WHERE (Trans_Num = ?)",
     [transNum]
   );
   return rows;
 };
+
 const checkSeirenWIP = async (transNum) => {
   const [rows] = await pool.query(
     "SELECT * FROM opt_ctech_seiren_WIP a WHERE (a.TransNum = ?)",
@@ -151,6 +152,23 @@ const checkSeirenWIP = async (transNum) => {
   );
   return rows;
 };
+
+const checkSeirenOutgoing = async (transNum) => {
+  const [rows] = await pool.query(
+    "SELECT * FROM opt_ctech_seiren_outgoing a WHERE (a.TransNum = ?) AND (Status = ?)",
+    [transNum, "Good"]
+  );
+  return rows;
+};
+
+const checkSeirenOutgoingType2 = async (transNumBatch) => {
+  const [rows] = await pool.query(
+    "SELECT * FROM opt_ctech_seiren_outgoing a WHERE (a.TransNumBatch = ?) AND (Status = ?)",
+    [transNumBatch, "Good"]
+  );
+  return rows;
+};
+
 const checkMachine = async (machineVal) => {
   const [rows] = await pool.query(
     "SELECT * FROM tbl_seikei_all_machine_list a WHERE (a.machinenum = ?)",
@@ -179,6 +197,15 @@ const entryOutgoing = async (process,user, machine, transNum,transNumBatch,resul
 const deleteWIP = async(transNum,transNumBatch) => {
   const[rows] = await pool.query(
     "DELETE FROM `opt_ctech_seiren_WIP` WHERE `TransNum` = ? AND `TransNumBatch` = ? LIMIT 1",
+    [transNum,transNumBatch]
+  );
+
+  return rows
+}
+
+const deleteOutgoing = async(transNum,transNumBatch) => {
+  const[rows] = await pool.query(
+    "DELETE FROM `opt_ctech_seiren_outgoing` WHERE `TransNum` = ? AND `TransNumBatch` = ? LIMIT 1",
     [transNum,transNumBatch]
   );
 
@@ -219,10 +246,13 @@ module.exports = {
   entryWIP,
   checkSeirenPlan,
   checkSeirenWIP,
+  checkSeirenOutgoing,
+  checkSeirenOutgoingType2,
   checkMachine,
   checkUser,
   entryOutgoing,
   deleteWIP,
+  deleteOutgoing,
   checkWIP
   //checkSeirenUserMachine,
 };

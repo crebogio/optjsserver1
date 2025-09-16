@@ -1,21 +1,20 @@
 
-const { entryOutgoing, entryLogs, deleteWIP,CHECKWIP} = require("../db/database");
+const { entryOutgoing, entryLogs, deleteWIP, checkWIP} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const insertOutgoing = async (req, res) => {
-  const { process,user,machine,transNum,transNumBatch,results,weight} = req.body; 
+   const { process, user, machine, transNum, transNumBatch, results, weight} = req.body; 
 
-  const validity =  await checkWIP(transNum,transNumBatch);
-     if(validity.length === 0){
-          res.status(200).json({ message: `item not in WIP`});
+   const validity =  await checkWIP(transNum,transNumBatch);
+   if(validity.length === 0){
+      res.status(200).json({status: 200,message:'Invalid'}); 
+   }
+   else{
+      const deletedEntry = await deleteWIP(transNum,transNumBatch);
+      const itemEntry = await entryOutgoing(process,user, machine, transNum,transNumBatch,results,weight);
+      const logEntry = await entryLogs("Outgoing", process,user, machine, transNum,transNumBatch,results,weight);
+      res.status(200).json({status: 200,message:'Valid'}); 
      }
-     else{
-        const deletedEntry = await deleteWIP(transNum,transNumBatch);
-        const itemEntry = await entryOutgoing(process,user, machine, transNum,transNumBatch,results,weight);
-        const logEntry = await entryLogs("Outgoing", process,user, machine, transNum,transNumBatch,results,weight);
-        res.status(200).json({ message: `log and wip entry:`, logEntry });
-     }
-
 };
 
 module.exports = { insertOutgoing };

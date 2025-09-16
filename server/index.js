@@ -15,6 +15,9 @@ const checkSeirenKnead = require("./routes/checkSeirenKnead");
 const checkSeirenUserMachine = require("./routes/checkSeirenUserMachine");
 const insertWIP = require("./routes/insertWIP");
 const insertOutgoing = require("./routes/insertOutgoing");
+const inKneading = require("./routes/inKneading");
+const inType1 = require("./routes/inType1");
+const inType2 = require("./routes/inType2");
 require("express-async-errors");
 require("dotenv").config();
 
@@ -42,6 +45,9 @@ app.use("/api/v1/checkSeirenKnead", checkSeirenKnead);
 app.use("/api/v1/checkSeirenUserMachine", checkSeirenUserMachine);
 app.use("/api/v1/insertWIP", insertWIP);
 app.use("/api/v1/insertOutgoing", insertOutgoing);
+app.use("/api/v1/inKneading", inKneading);
+app.use("/api/v1/inType1", inType1);
+app.use("/api/v1/inType2", inType2);
 app.use(notFound);
 app.use(errorHandler);
 
