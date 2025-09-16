@@ -21,7 +21,7 @@ const inType3 = async (req, res) => {
           const logEntry = await entryLogs("WIP", process, user, machine, transNum,transNumBatch, "N/A", "0.0");
 
           for(const row of allSeirenBatch){
-            console.log(row);
+            //console.log(row);
 
             const itemEntry = await entryWIP(process,user, machine, "N/A",row.Trans_Num_Batch);
             const logEntry = await entryLogs("WIP", process, user, machine, "N/A",row.Trans_Num_Batch, "N/A", "0.0");
