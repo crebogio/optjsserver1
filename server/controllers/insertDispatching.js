@@ -1,4 +1,4 @@
-const {checkRheoPass,checkOutgoingCuttingPass, checkUser, getBatchNo, entryLogs,entryDispatching, getOrigin} = require("../db/database");
+const {deleteOutgoing,checkRheoPass,checkOutgoingCuttingPass, checkUser, getBatchNo, entryLogs,entryDispatching, getOrigin} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const insertDispatching = async (req, res) => {
@@ -59,6 +59,7 @@ const insertDispatching = async (req, res) => {
             // Console.log(str1);
             // Console.log(str);
             // Console.log(str2);
+            const deleteEntry = await deleteOutgoing("N/A",transNum);
             const itemEntry = await entryDispatching(transNum,user,str,str2,str1);
             const logEntry = await entryLogs("OUTGOING", "DISPATCHING", user, "N/A", "N/A",transNum, "PASS", str2,str);
 
