@@ -1,6 +1,6 @@
 // insert rolling and cutting
 
-const { checkSeirenOutgoing, deleteOutgoing, entryWIP, entryLogs,checkUser,checkMachine} = require("../db/database");
+const {getBatchNo, checkSeirenOutgoing, deleteOutgoing, entryWIP, entryLogs,checkUser,checkMachine} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const inType1 = async (req, res) => {
