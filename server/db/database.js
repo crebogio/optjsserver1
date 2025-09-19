@@ -208,10 +208,10 @@ const entryRheoLogs = async (transNum,user, machine, result) => {
   return rows
 }
 
-const updateRheoLogs = async (user, machine,weight,transNum) => {
+const deleteRheoLogs = async (transNum) => {
   const [rows] = await pool.query(
-    "UPDATE `opt_ctech_seiren_rheo_logs` SET UserID = ?, MachineNum = ?, Result = ? WHERE TransNum = ?",
-    [user, machine,weight,transNum]
+    "DELETE FROM `opt_ctech_seiren_rheo_logs` WHERE `TransNum` = ?",
+    [transNum]
   );
   return rows
 }
@@ -307,7 +307,7 @@ module.exports = {
   getOrigin, 
   getBatchNo,
   entryRheoLogs,
-  updateRheoLogs,
+  deleteRheoLogs,
   entryDispatching,
   getNoOfBucket
 };

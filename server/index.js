@@ -19,6 +19,7 @@ const inKneading = require("./routes/inKneading");
 const inType1 = require("./routes/inType1");
 const inType2 = require("./routes/inType2");
 const inType3 = require("./routes/inType3");
+const updaterheometer = require("./routes/updateRheometer");
 require("express-async-errors");
 require("dotenv").config();
 
@@ -50,6 +51,7 @@ app.use("/api/v1/inKneading", inKneading);
 app.use("/api/v1/inType1", inType1);
 app.use("/api/v1/inType2", inType2);
 app.use("/api/v1/inType3", inType3);
+app.use("/api/v1/updaterheometer", updaterheometer);
 app.use(notFound);
 app.use(errorHandler);
 
