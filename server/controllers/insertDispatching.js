@@ -26,11 +26,11 @@ const insertDispatching = async (req, res) => {
         str2=row.KGperBuckets;
     }
             
-    console.log(user);
-    console.log(transNumTruncated);
-    console.log(str1);
-    console.log(str);
-    console.log(str2);
+    // console.log(user);
+    // console.log(transNumTruncated);
+    // console.log(str1);
+    // console.log(str);
+    // console.log(str2);
 
 
 
