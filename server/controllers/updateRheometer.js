@@ -19,7 +19,7 @@ const updateRheometer = async (req, res) => {
                 str=row.BatchNo;
             }
             deleteRheoLogs(transNum);
-            const logEntry = await entryLogs("OUTGOING", "RHEOMETER", user, machine, transNum,"N/A", result, "0.0",str);
+            const logEntry = await entryLogs("Outgoing", "RHEOMETER", user, machine, transNum,"N/A", result, "0.0",str);
             entryRheoLogs(transNum,user,machine,result);
             res.status(200).json({message:'valid'});
         }

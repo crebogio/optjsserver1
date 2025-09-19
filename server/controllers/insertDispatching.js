@@ -61,7 +61,7 @@ const insertDispatching = async (req, res) => {
             // Console.log(str2);
             const deleteEntry = await deleteOutgoing("N/A",transNum);
             const itemEntry = await entryDispatching(transNum,user,str,str2,str1);
-            const logEntry = await entryLogs("OUTGOING", "DISPATCHING", user, "N/A", "N/A",transNum, "PASS", str2,str);
+            const logEntry = await entryLogs("Outgoing", "DISPATCHING", user, "N/A", "N/A",transNum, "PASS", str2,str);
 
             res.status(200).json({message:'Valid'}); 
         }
