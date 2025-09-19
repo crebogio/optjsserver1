@@ -118,20 +118,20 @@ const checkInputs = async(user_ID, machine_number, item_number) => {
 }
 
 // Logs all changes on the WIP and outgoing tables
-const entryLogs = async(direction, process,user, machine, transNum,transNumBatch,status,weight) => {
+const entryLogs = async(direction, process,user, machine, transNum,transNumBatch,status,weight,batchno) => {
   const[rows] = await pool.query(
-    "INSERT INTO `opt_ctech_seiren_logs` (`direction`, `Process`, `UserID`, `MachineNum`, `TransNum`, `TransNumBatch`, `Status`, `KGperBuckets`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-    [direction, process,user, machine, transNum,transNumBatch,status,weight]
+    "INSERT INTO `opt_ctech_seiren_logs` (`direction`, `Process`, `UserID`, `MachineNum`, `TransNum`, `TransNumBatch`, `Status`, `KGperBuckets`,`BatchNo`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    [direction, process,user, machine, transNum,transNumBatch,status,weight,batchno]
   );
 
   return rows
 }
 
 // adds to WIP table
-const entryWIP = async (process,user, machine, transNum,transNumBatch) => {
+const entryWIP = async (process,user, machine, transNum,transNumBatch,BatchNo) => {
   const [rows] = await pool.query(
-    "INSERT INTO `opt_ctech_seiren_WIP` (`Process`, `UserID`, `MachineNumber`,`TransNum`, `TransNumBatch`) VALUES (?,?,?,?,?)",
-    [process,user, machine, transNum,transNumBatch]
+    "INSERT INTO `opt_ctech_seiren_WIP` (`Process`, `UserID`, `MachineNumber`,`TransNum`, `TransNumBatch`,`BatchNo`) VALUES (?,?,?,?,?,?)",
+    [process,user, machine, transNum,transNumBatch,BatchNo]
   );
 
   return rows
@@ -171,7 +171,7 @@ const checkSeirenOutgoingType2 = async (transNumBatch) => {
 
 const checkMachine = async (machineVal) => {
   const [rows] = await pool.query(
-    "SELECT * FROM tbl_seikei_all_machine_list a WHERE (a.machinenum = ?)",
+    "SELECT * FROM tbl_seikei_all_machine_list a WHERE (a.equipno = ?)",
     [machineVal]
   );
   return rows;
@@ -184,6 +184,46 @@ const checkUser = async (idVal) => {
   return rows;
 };
 
+const getOrigin = async (transNum) => {
+  const [rows] = await pool.query(
+    "SELECT a.Origin FROM tbl_seiren_daily_sched_control a WHERE (a.Trans_Num = ?)",
+    [transNum]
+  );
+  return rows;
+};
+
+const getBatchNo = async (transNum) => {
+  const [rows] = await pool.query(
+    "SELECT a.BatchNo FROM opt_ctech_seiren_logs a WHERE (a.TransNum = ?)",
+    [transNum]
+  );
+  return rows;
+};
+
+const entryRheoLogs = async (transNum,user, machine, result) => {
+  const [rows] = await pool.query(
+    "INSERT INTO `opt_ctech_seiren_rheo_logs` (`TransNum`, `UserID` , `MachineNum` , `Result`) VALUES (?,?,?,?)",
+    [transNum,user, machine, result]
+  );
+  return rows
+}
+
+const updateRheoLogs = async (user, machine,weight,transNum) => {
+  const [rows] = await pool.query(
+    "UPDATE `opt_ctech_seiren_rheo_logs` SET UserID = ?, MachineNum = ?, Result = ? WHERE TransNum = ?",
+    [user, machine,weight,transNum]
+  );
+  return rows
+}
+
+const entryDispatching = async (transNumBatch,user,batchno,weight) => {
+  const [rows] = await pool.query(
+    "INSERT INTO `opt_ctech_seiren_dispatching` ( `TransNumBatch`,`UserID`, `BatchNo`,`KGperBuckets`) VALUES (?,?,?,?)",
+    [transNumBatch,user,batchno,weight]
+  );
+
+  return rows
+}
 
 const entryOutgoing = async (process,user, machine, transNum,transNumBatch,results,weight) => {
   const [rows] = await pool.query(
@@ -220,13 +260,14 @@ const checkWIP = async(transNum,transNumBatch) => {
   return rows
 }
 
-// const checkSeirenUserMachine = async (inRackNo) => {
-//   const [rows] = await pool.query(
-//     "SELECT * FROM tbl_seiren_rackmasterlist WHERE (tbl_seiren_rackmasterlist.rack_addressno = ? AND (NOT EXISTS (SELECT * FROM tbl_seiren_actual_arrive WHERE tbl_seiren_actual_arrive.AddressNo = ?) OR (NOT EXISTS(SELECT * FROM tbl_seiren_actual_arrive WHERE tbl_seiren_actual_arrive.AddressNo= ? AND tbl_seiren_actual_arrive.balance != 0))))",
-//     [inRackNo,inRackNo,inRackNo]
-//   );
-//   return rows;
-// };
+
+const checkMixtureTransNum = async(transNum,mixture) => {
+  const[rows] = await pool.query(
+    "SELECT 1 FROM `tbl_seiren_daily_sched_control` WHERE `Trans_Num` = ? AND `Mixture` = ? ",
+    [transNum,mixture]
+  );
+  return rows
+}
 
 
 module.exports = {
@@ -253,6 +294,11 @@ module.exports = {
   entryOutgoing,
   deleteWIP,
   deleteOutgoing,
-  checkWIP
-  //checkSeirenUserMachine,
+  checkWIP,
+  checkMixtureTransNum,
+  getOrigin, 
+  getBatchNo,
+  entryRheoLogs,
+  updateRheoLogs,
+  entryDispatching
 };
