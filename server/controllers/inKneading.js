@@ -1,4 +1,4 @@
-const { checkSeirenPlan, checkSeirenWIP, checkUser, checkMachine, entryWIP, entryLogs} = require("../db/database");
+const { checkSeirenPlan, checkSeirenWIP, checkUser, checkMachine, entryWIP, entryLogs,checkMixtureTransNum} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const inKneading = async (req, res) => {
