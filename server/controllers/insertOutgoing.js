@@ -18,6 +18,7 @@ const insertOutgoing = async (req, res) => {
          for(const row of batchEntry){
             str=row.BatchNo;
          }
+         
          const deletedEntry = await deleteWIP(transNum,transNumBatch);
          const itemEntry = await entryOutgoing(process,user, machine, transNum,transNumBatch,results,weight);
          const logEntry = await entryLogs("Outgoing", process,user, machine, transNum,transNumBatch,results,weight,str);

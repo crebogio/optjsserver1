@@ -216,10 +216,10 @@ const deleteRheoLogs = async (transNum) => {
   return rows
 }
 
-const entryDispatching = async (transNumBatch,user,batchno,weight) => {
+const entryDispatching = async (transNumBatch,user,batchno,weight,origin) => {
   const [rows] = await pool.query(
-    "INSERT INTO `opt_ctech_seiren_dispatching` ( `TransNumBatch`,`UserID`, `BatchNo`,`KGperBuckets`) VALUES (?,?,?,?)",
-    [transNumBatch,user,batchno,weight]
+    "INSERT INTO `opt_ctech_seiren_dispatching` ( `TransNumBatch`,`UserID`, `BatchNo`,`KGperBuckets`,`Origin`) VALUES (?,?,?,?,?)",
+    [transNumBatch,user,batchno,weight,origin]
   );
 
   return rows
@@ -277,6 +277,21 @@ const getNoOfBucket = async(transNum) => {
   return rows
 }
 
+const checkOutgoingCuttingPass = async(transNum) => {
+  const[rows] = await pool.query(
+    "SELECT * FROM `opt_ctech_seiren_outgoing` WHERE `PrevProcess` = ? AND `Status` = ? AND `TransNumBatch` = ? ",
+    ['CUTTING','GOOD',transNum,]
+  );
+  return rows
+}
+const checkRheoPass = async(transNum) => {
+  const[rows] = await pool.query(
+    "SELECT * FROM `opt_ctech_seiren_rheo_logs` WHERE  `Result` = ? AND `TransNum` = ? ",
+    ['PASS',transNum]
+  );
+  return rows
+}
+
 
 module.exports = {
   getRacks,
@@ -309,5 +324,7 @@ module.exports = {
   entryRheoLogs,
   deleteRheoLogs,
   entryDispatching,
-  getNoOfBucket
+  getNoOfBucket,
+  checkOutgoingCuttingPass,
+  checkRheoPass
 };
