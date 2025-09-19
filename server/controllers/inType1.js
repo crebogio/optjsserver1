@@ -14,9 +14,14 @@ const inType1 = async (req, res) => {
   if (isUserValid.length > 0) {
     if (isMachineValid.length > 0) {
         if (isTransNumInWIP.length !== 0) {
+          const batchEntry = await getBatchNo(transNum);
+          var str ='';
+          for(const row of batchEntry){
+              str=row.BatchNo;
+          }
           const deletedEntry = await deleteOutgoing(transNum, transNumBatch)
-          const itemEntry = await entryWIP(process,user, machine, transNum,transNumBatch);
-          const logEntry = await entryLogs("WIP", process, user, machine, transNum,transNumBatch, "N/A", "0.0");
+          const itemEntry = await entryWIP(process,user, machine, transNum,transNumBatch,str);
+          const logEntry = await entryLogs("WIP", process, user, machine, transNum,transNumBatch, "N/A", "0.0",str);
           res.status(200).json({message:'Valid'}); 
         }
         else{
