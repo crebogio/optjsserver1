@@ -1,5 +1,5 @@
 
-const { entryOutgoing, entryLogs, deleteWIP, checkWIP,checkUser} = require("../db/database");
+const { entryOutgoing, entryLogs, deleteWIP, checkWIP,checkUser,getBatchNo} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const insertOutgoing = async (req, res) => {
@@ -13,9 +13,14 @@ const insertOutgoing = async (req, res) => {
          res.status(200).json({error:'Invalid not found in WIP'}); 
       }
       else{
+         const batchEntry = await getBatchNo(transNum);
+         var str ='';
+         for(const row of batchEntry){
+            str=row.BatchNo;
+         }
          const deletedEntry = await deleteWIP(transNum,transNumBatch);
          const itemEntry = await entryOutgoing(process,user, machine, transNum,transNumBatch,results,weight);
-         const logEntry = await entryLogs("Outgoing", process,user, machine, transNum,transNumBatch,results,weight);
+         const logEntry = await entryLogs("Outgoing", process,user, machine, transNum,transNumBatch,results,weight,str);
          res.status(200).json({message:'Valid'}); 
       }
    }
