@@ -5,7 +5,7 @@ const CustomError = require("../error/custom-error");
 const insertOutgoing = async (req, res) => {
    const { process, user, machine, transNum, transNumBatch, results, weight} = req.body; 
 
-   const validity =  await checkWIP(transNum,transNumBatch);
+   const validity =  await checkWIP(transNum, transNumBatch, process);
    const isUserValid = await checkUser(user);
 
    if (isUserValid.length > 0) {

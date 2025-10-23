@@ -252,10 +252,10 @@ const deleteOutgoing = async(transNum,transNumBatch) => {
   return rows
 }
 
-const checkWIP = async(transNum,transNumBatch) => {
+const checkWIP = async(transNum,transNumBatch, process) => {
   const[rows] = await pool.query(
-    "SELECT 1 FROM `opt_ctech_seiren_WIP` WHERE `TransNum` = ? AND `TransNumBatch` = ? ",
-    [transNum,transNumBatch]
+    "SELECT 1 FROM `opt_ctech_seiren_WIP` WHERE `TransNum` = ? AND `TransNumBatch` = ? AND `Process` = ?",
+    [transNum,transNumBatch, process]
   );
   return rows
 }
@@ -276,6 +276,16 @@ const getNoOfBucket = async(transNum) => {
   );
   return rows
 }
+
+const checkCM = async(transNum, cm) => {
+  const[rows] = await pool.query(
+    "SELECT * FROM `tbl_seiren_daily_sched_control` WHERE `Trans_Num` = ? AND `CM` = ? ",
+    [transNum, cm]
+  );
+  return rows
+}
+
+
 
 const checkOutgoingCuttingPass = async(transNum) => {
   const[rows] = await pool.query(
@@ -308,6 +318,7 @@ module.exports = {
   checkInputs,
   entryLogs,
   entryWIP,
+  checkCM,
   checkSeirenPlan,
   checkSeirenWIP,
   checkSeirenOutgoing,
