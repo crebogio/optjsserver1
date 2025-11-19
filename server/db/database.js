@@ -153,6 +153,14 @@ const checkSeirenWIP = async (transNum) => {
   return rows;
 };
 
+const checkSeirenDispatch = async (transNum) => {
+  const [rows] = await pool.query(
+    "SELECT * FROM opt_ctech_seiren_dispatching WHERE TransNumBatch LIKE CONCAT(?, '%')",
+    [transNum]
+  );
+  return rows;
+};
+
 const checkSeirenOutgoing = async (transNum) => {
   const [rows] = await pool.query(
     "SELECT * FROM opt_ctech_seiren_outgoing a WHERE (a.TransNum = ?) AND (Status = ?)",
@@ -321,6 +329,7 @@ module.exports = {
   checkCM,
   checkSeirenPlan,
   checkSeirenWIP,
+  checkSeirenDispatch,
   checkSeirenOutgoing,
   checkSeirenOutgoingType2,
   checkMachine,
