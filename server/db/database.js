@@ -177,6 +177,14 @@ const checkSeirenOutgoingType2 = async (transNumBatch) => {
   return rows;
 };
 
+const checkBatchNo = async (batchno) => {
+  const [rows] = await pool.query(
+    "SELECT * FROM opt_ctech_seiren_logs a WHERE (a.BatchNo = ?)",
+    [batchno]
+  );
+  return rows;
+};
+
 const checkMachine = async (machineVal) => {
   const [rows] = await pool.query(
     "SELECT * FROM tbl_seikei_all_machine_list a WHERE (a.equipno = ?)",
@@ -184,6 +192,8 @@ const checkMachine = async (machineVal) => {
   );
   return rows;
 };
+
+
 const checkUser = async (idVal) => {
   const [rows] = await pool.query(
     "SELECT * FROM tboperatorlist a WHERE (a.id = ?)",
@@ -346,5 +356,6 @@ module.exports = {
   entryDispatching,
   getNoOfBucket,
   checkOutgoingCuttingPass,
-  checkRheoPass
+  checkRheoPass,
+  checkBatchNo
 };

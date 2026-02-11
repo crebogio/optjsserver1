@@ -18,7 +18,7 @@ const inType3 = async (req, res) => {
           for(const row of batchEntry){
               str=row.BatchNo;
           }
-          const firstRow = getNoOfBuckets[0].Trans_Num_Batch;
+          const firstRow = 60/getNoOfBuckets[0].Trans_Num_Batch;
 
           const deletedEntry = await deleteOutgoing(transNum, transNumBatch);
           for (let i = 0; i < firstRow; i++) {
