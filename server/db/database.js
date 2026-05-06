@@ -320,6 +320,27 @@ const checkRheoPass = async(transNum) => {
   return rows
 }
 
+const checkSeikeiDispatching = async(transNum) => {
+  const[rows] = await pool.query(
+    "SELECT * FROM `opt_ctech_seiren_dispatching` a WHERE `TransNumBatch` = ?",
+    [transNum]
+  );
+  return rows
+}
+const checkSeikeiWIP = async(transNum) => {
+  const[rows] = await pool.query(
+    "SELECT * FROM `opt_ctech_seikei_wip` a WHERE `ctrl_no` = ?",
+    [transNum]
+  );
+  return rows
+}
+const checkSeikeiOut = async(transNum) => {
+  const[rows] = await pool.query(
+    "SELECT * FROM `opt_ctech_seikei_out` a WHERE `ctrl_no` = ?",
+    [transNum]
+  );
+  return rows
+}
 
 module.exports = {
   getRacks,
@@ -357,5 +378,8 @@ module.exports = {
   getNoOfBucket,
   checkOutgoingCuttingPass,
   checkRheoPass,
-  checkBatchNo
+  checkBatchNo,
+  checkSeikeiDispatching,
+  checkSeikeiWIP,
+  checkSeikeiOut
 };
