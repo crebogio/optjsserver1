@@ -341,6 +341,13 @@ const checkSeikeiOut = async(transNum) => {
   );
   return rows
 }
+const checkSeikeiWIPPaused = async(transNum) => {
+  const[rows] = await pool.query(
+    "SELECT * FROM `opt_ctech_seikei_wip` a WHERE `ctrl_no` = ? AND `status` = 0",
+    [transNum]
+  );
+  return rows
+}
 
 module.exports = {
   getRacks,
@@ -381,5 +388,6 @@ module.exports = {
   checkBatchNo,
   checkSeikeiDispatching,
   checkSeikeiWIP,
-  checkSeikeiOut
+  checkSeikeiOut,
+  checkSeikeiWIPPaused
 };

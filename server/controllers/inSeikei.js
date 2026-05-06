@@ -1,4 +1,4 @@
-const { checkSeikeiDispatching, checkSeikeiOut,checkSeikeiWIP} = require("../db/database");
+const { checkSeikeiDispatching, checkSeikeiOut,checkSeikeiWIP,checkSeikeiWIPPaused} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const inSeikei = async (req, res) => {
@@ -7,6 +7,7 @@ const inSeikei = async (req, res) => {
   const isCtrlNoInDispatching = await checkSeikeiDispatching(ctrl_no);
   const isCtrlNoInWip = await checkSeikeiWIP(ctrl_no);
   const isCtrlNoInOut = await checkSeikeiOut(ctrl_no);
+  const isCtrlNoPaused= await checkSeikeiWIPPaused(ctrl_no);
 
   if (isCtrlNoInDispatching.length > 0) {
     if (isCtrlNoInOut.length === 0) {
@@ -14,7 +15,12 @@ const inSeikei = async (req, res) => {
         res.status(200).json({message:'add'});
       }
       else{
-        res.status(200).json({message:'modify'});
+        if(isCtrlNoPaused.length === 0){
+          res.status(200).json({message:'modify'});
+        }
+        else{
+          res.status(200).json({message:'continue'});
+        }
       }
     }
     else{
