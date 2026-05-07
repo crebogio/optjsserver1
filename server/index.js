@@ -22,6 +22,8 @@ const inType3 = require("./routes/inType3");
 const updaterheometer = require("./routes/updateRheometer");
 const insertDispatching = require("./routes/insertDispatching");
 const  inSeikei  = require("./routes/inSeikei");
+const  insertSeikeiWip  = require("./routes/insertSeikeiWip");
+const insertSeikeiOut  = require("./routes/insertSeikeiOut");
 require("express-async-errors");
 require("dotenv").config();
 
@@ -56,6 +58,8 @@ app.use("/api/v1/inType3", inType3);
 app.use("/api/v1/updaterheometer", updaterheometer);
 app.use("/api/v1/insertDispatching", insertDispatching);
 app.use("/api/v2/inSeikei", inSeikei);
+app.use("/api/v2/insertSeikeiWip", insertSeikeiWip);
+app.use("/api/v2/insertSeikeiOut", insertSeikeiOut);
 app.use(notFound);
 app.use(errorHandler);
 

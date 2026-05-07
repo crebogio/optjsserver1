@@ -320,9 +320,9 @@ const checkRheoPass = async(transNum) => {
   return rows
 }
 
-const checkSeikeiDispatching = async(transNum) => {
+const checkSeikeiPrintMaster = async(transNum) => {
   const[rows] = await pool.query(
-    "SELECT * FROM `opt_ctech_seiren_dispatching` a WHERE `TransNumBatch` = ?",
+    "SELECT * FROM `tbprintmaster` a WHERE `CTLNO` = ?",
     [transNum]
   );
   return rows
@@ -348,6 +348,54 @@ const checkSeikeiWIPPaused = async(transNum) => {
   );
   return rows
 }
+
+const dbCheckSeikeiMachine = async(val) => {
+  const[rows] = await pool.query(
+    "SELECT * FROM `tbl_seikei_all_machine_list` a WHERE `machinenum` = ?",
+    [val]
+  );
+  return rows
+}
+const dbCheckSeikeiEmployee = async(val) => {
+  const[rows] = await pool.query(
+    "SELECT * FROM `tboperatorlist` a WHERE `id` = ?",
+    [val]
+  );
+  return rows
+}
+
+const dbInsertSeikeiWip = async (ctrl_no,item_no, mold_no, batch_no,machine,employee,start_time) => {
+  const [rows] = await pool.query(
+    "INSERT INTO `opt_ctech_seikei_wip` (`ctrl_no`, `item_no`, `mold_no`,`batch_no`, `machine`,`employee`,`start_time`) VALUES (?,?,?,?,?,?,?)",
+    [ctrl_no,item_no, mold_no, batch_no,machine,employee,start_time]
+  );
+  return rows
+}
+
+const dbDeleteSeikeiWip = async (ctrl_no) => {
+  const [rows] = await pool.query(
+    "DELETE FROM `opt_ctech_seikei_wip` WHERE `ctrl_no` = ?",
+    [ctrl_no]
+  );
+  return rows
+}
+
+const dbInsertSeikeiOut = async (ctrl_no,item_no, mold_no, batch_no,machine,employee,start_time,end_time,no_of_shots,produce_count,reject_count,reject_type) => {
+  const [rows] = await pool.query(
+    "INSERT INTO `opt_ctech_seikei_out` (`ctrl_no`, `item_no`, `mold_no`,`batch_no`, `machine`,`employee`,`start_time`,`end_time`,`no_of_shots`,`produce_count`,`reject_count`,`reject_type`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+    [ctrl_no,item_no, mold_no, batch_no,machine,employee,start_time,end_time,no_of_shots,produce_count,reject_count,reject_type]
+  );
+  return rows
+}
+
+
+// const insertSeikeiLog = async (ctrl_no,item_no, mold_no, batch_no,machine,employee) => {
+//   const [rows] = await pool.query(
+//     "INSERT INTO `opt_ctech_seikei_wip` (`ctrl_no`, `item_no`, `mold_no`,`batch_no`, `machine`,`employee`) VALUES (?,?,?,?,?,?)",
+//     [ctrl_no,item_no, mold_no, batch_no,machine,employee]
+//   );
+//   return rows
+// }
 
 module.exports = {
   getRacks,
@@ -386,8 +434,13 @@ module.exports = {
   checkOutgoingCuttingPass,
   checkRheoPass,
   checkBatchNo,
-  checkSeikeiDispatching,
+  checkSeikeiPrintMaster,
   checkSeikeiWIP,
   checkSeikeiOut,
-  checkSeikeiWIPPaused
+  checkSeikeiWIPPaused,
+  dbCheckSeikeiMachine,
+  dbCheckSeikeiEmployee,
+  dbInsertSeikeiWip,
+  dbDeleteSeikeiWip,
+  dbInsertSeikeiOut
 };

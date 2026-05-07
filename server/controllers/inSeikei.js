@@ -1,18 +1,19 @@
-const { checkSeikeiDispatching, checkSeikeiOut,checkSeikeiWIP,checkSeikeiWIPPaused} = require("../db/database");
+const { checkSeikeiPrintMaster, checkSeikeiOut,checkSeikeiWIP,checkSeikeiWIPPaused} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const inSeikei = async (req, res) => {
   const { ctrl_no} = req.params;
   
-  const isCtrlNoInDispatching = await checkSeikeiDispatching(ctrl_no);
+  const isCtrlNoInPrintMaster = await checkSeikeiPrintMaster(ctrl_no);
   const isCtrlNoInWip = await checkSeikeiWIP(ctrl_no);
   const isCtrlNoInOut = await checkSeikeiOut(ctrl_no);
   const isCtrlNoPaused= await checkSeikeiWIPPaused(ctrl_no);
 
-  if (isCtrlNoInDispatching.length > 0) {
+  if (isCtrlNoInPrintMaster.length > 0) {
     if (isCtrlNoInOut.length === 0) {
       if (isCtrlNoInWip.length === 0) {
-        res.status(200).json({message:'add'});
+        const { ITMCD, MOLDNO } = isCtrlNoInPrintMaster[0];
+        res.status(200).json({item_no: ITMCD,mold_no: MOLDNO});
       }
       else{
         if(isCtrlNoPaused.length === 0){

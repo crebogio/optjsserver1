@@ -1,5 +1,7 @@
 const express = require("express");
-const { inSeikei } = require("../controllers/inSeikei");
+const { 
+  inSeikei 
+} = require("../controllers/inSeikei");
 
 const router = express.Router();
 
