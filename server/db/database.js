@@ -388,6 +388,13 @@ const dbInsertSeikeiOut = async (ctrl_no,item_no, mold_no, batch_no,lot_no,machi
   return rows
 }
 
+const dbGetSeikeiWip = async (ctrl_no) => {
+  const [rows] = await pool.query(
+    "SELECT * FROM `opt_ctech_seikei_wip` WHERE `ctrl_no` = ?",
+    [ctrl_no]
+  );
+  return rows
+}
 
 // const insertSeikeiLog = async (ctrl_no,item_no, mold_no, batch_no,machine,employee) => {
 //   const [rows] = await pool.query(
@@ -442,5 +449,6 @@ module.exports = {
   dbCheckSeikeiEmployee,
   dbInsertSeikeiWip,
   dbDeleteSeikeiWip,
-  dbInsertSeikeiOut
+  dbInsertSeikeiOut,
+  dbGetSeikeiWip
 };
