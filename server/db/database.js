@@ -366,8 +366,8 @@ const dbCheckSeikeiEmployee = async(val) => {
 
 const dbInsertSeikeiWip = async (ctrl_no,item_no, mold_no, batch_no,lot_no,machine,employee,start_time) => {
   const [rows] = await pool.query(
-    "INSERT INTO `opt_ctech_seikei_wip` (`ctrl_no`, `item_no`, `mold_no`,`batch_no`,`lot_no`, `machine`,`employee`,`start_time`) VALUES (?,?,?,?,?,?,?,?)",
-    [ctrl_no,item_no, mold_no, batch_no,lot_no,machine,employee,start_time]
+    "INSERT INTO `opt_ctech_seikei_wip` (`ctrl_no`, `item_no`, `mold_no`,`batch_no`,`lot_no`, `machine`,`employee`,`start_time`,`status`,`pause_length`) VALUES (?,?,?,?,?,?,?,?,?,?)",
+    [ctrl_no,item_no, mold_no, batch_no,lot_no,machine,employee,start_time,1,0]
   );
   return rows
 }
@@ -380,10 +380,10 @@ const dbDeleteSeikeiWip = async (ctrl_no) => {
   return rows
 }
 
-const dbInsertSeikeiOut = async (ctrl_no,item_no, mold_no, batch_no,machine,employee,start_time,end_time,no_of_shots,produce_count,reject_count,reject_type) => {
+const dbInsertSeikeiOut = async (ctrl_no,item_no, mold_no, batch_no,lot_no,machine,employee,start_time,end_time,no_of_shots,produce_count,reject_count,reject_type) => {
   const [rows] = await pool.query(
-    "INSERT INTO `opt_ctech_seikei_out` (`ctrl_no`, `item_no`, `mold_no`,`batch_no`, `machine`,`employee`,`start_time`,`end_time`,`no_of_shots`,`produce_count`,`reject_count`,`reject_type`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
-    [ctrl_no,item_no, mold_no, batch_no,machine,employee,start_time,end_time,no_of_shots,produce_count,reject_count,reject_type]
+    "INSERT INTO `opt_ctech_seikei_out` (`ctrl_no`, `item_no`, `mold_no`,`batch_no`, `lot_no`,`machine`,`employee`,`start_time`,`end_time`,`no_of_shots`,`produce_count`,`reject_count`,`reject_type`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    [ctrl_no,item_no, mold_no, batch_no,lot_no,machine,employee,start_time,end_time,no_of_shots,produce_count,reject_count,reject_type]
   );
   return rows
 }
