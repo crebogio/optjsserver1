@@ -364,10 +364,10 @@ const dbCheckSeikeiEmployee = async(val) => {
   return rows
 }
 
-const dbInsertSeikeiWip = async (ctrl_no,item_no, mold_no, batch_no,machine,employee,start_time) => {
+const dbInsertSeikeiWip = async (ctrl_no,item_no, mold_no, batch_no,lot_no,machine,employee,start_time) => {
   const [rows] = await pool.query(
-    "INSERT INTO `opt_ctech_seikei_wip` (`ctrl_no`, `item_no`, `mold_no`,`batch_no`, `machine`,`employee`,`start_time`) VALUES (?,?,?,?,?,?,?)",
-    [ctrl_no,item_no, mold_no, batch_no,machine,employee,start_time]
+    "INSERT INTO `opt_ctech_seikei_wip` (`ctrl_no`, `item_no`, `mold_no`,`batch_no`,`lot_no`, `machine`,`employee`,`start_time`) VALUES (?,?,?,?,?,?,?,?)",
+    [ctrl_no,item_no, mold_no, batch_no,lot_no,machine,employee,start_time]
   );
   return rows
 }

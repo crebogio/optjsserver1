@@ -29,7 +29,7 @@ const inSeikei = async (req, res) => {
     }
   }
   else{
-    res.status(200).json({error:'Not in Seiren Dispatching'});
+    res.status(200).json({error:'Not in Print Master'});
   }  
 }
 
