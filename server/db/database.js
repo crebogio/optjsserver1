@@ -349,9 +349,17 @@ const checkSeikeiWIPPaused = async(transNum) => {
   return rows
 }
 
+const dbCheckDispatching = async(val) => {
+  const[rows] = await pool.query(
+    "SELECT `BatchNo` FROM `opt_ctech_seiren_dispatching` a WHERE `TransNumBatch` = ?",
+    [val]
+  );
+  return rows
+}
+
 const dbCheckSeikeiMachine = async(val) => {
   const[rows] = await pool.query(
-    "SELECT * FROM `tbl_seikei_all_machine_list` a WHERE `machinenum` = ?",
+    "SELECT * FROM `tbl_seikei_all_machine_list` a WHERE `machinecode` = ?",
     [val]
   );
   return rows
@@ -447,6 +455,7 @@ module.exports = {
   checkSeikeiWIPPaused,
   dbCheckSeikeiMachine,
   dbCheckSeikeiEmployee,
+  dbCheckDispatching,
   dbInsertSeikeiWip,
   dbDeleteSeikeiWip,
   dbInsertSeikeiOut,
