@@ -307,8 +307,8 @@ const checkCM = async(transNum, cm) => {
 
 const checkOutgoingCuttingPass = async(transNum) => {
   const[rows] = await pool.query(
-    "SELECT * FROM `opt_ctech_seiren_outgoing` WHERE `PrevProcess` = ? AND `Status` = ? AND `TransNumBatch` = ? ",
-    ['CUTTING','GOOD',transNum,]
+    "SELECT * FROM `opt_ctech_seiren_outgoing` WHERE `PrevProcess` = ? AND `Status` = ? AND `TransNumBatch` LIKE CONCAT( ?, '%') ",
+    ['CUTTING','GOOD',transNum]
   );
   return rows
 }
