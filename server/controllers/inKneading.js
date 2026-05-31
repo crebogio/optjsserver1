@@ -19,7 +19,7 @@ const inKneading = async (req, res) => {
           if(isTransNumInPlan.length > 0){
             if(isTransNumInDispatch.length == 0){
               if(isMixtureValid.length > 0){
-                if(isCheckBatchNo.length === 0){
+                //if(isCheckBatchNo.length === 0){
                   if(isCMValid.length > 0){
                     const itemEntry = await entryWIP("KNEADING",user, machine, transNum,"N/A",batchNo);
                     const logEntry = await entryLogs("WIP", "KNEADING", user, machine, transNum,"N/A", "N/A", "0.0",batchNo);
@@ -28,7 +28,10 @@ const inKneading = async (req, res) => {
                   else{
                     res.status(200).json({error:'CM not in daily plan'});
                   }
-                }
+                //}
+                //else{
+                //    res.status(200).json({error:'invalid batch no.'});
+                //}
               }
               else{
                 res.status(200).json({error:'Match Mixture with plan'});

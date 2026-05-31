@@ -289,7 +289,7 @@ const checkMixtureTransNum = async(transNum,mixture) => {
 
 const getNoOfBucket = async(transNum) => {
   const[rows] = await pool.query(
-    "SELECT a.Trans_Num_Batch FROM `tbl_seiren_daily_sched_control` a WHERE `Trans_Num` = ?",
+    "SELECT * FROM `tbl_seiren_daily_sched_control` a WHERE `Trans_Num` = ?",
     [transNum]
   );
   return rows

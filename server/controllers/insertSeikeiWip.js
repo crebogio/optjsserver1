@@ -7,7 +7,7 @@ const insertSeikeiWip = async (req, res) => {
 
   const isEmployeeValid = await dbCheckSeikeiEmployee(employee);
   const isMachineValid = await dbCheckSeikeiMachine(machine);
-  const dbCheckDispatching = await dbCheckSeikeiMachine(batch_no);
+  const dbCheckDispatching = await dbCheckDispatching(batch_no);
   if (isEmployeeValid.length > 0) {
     if (isMachineValid.length > 0) {
           if (dbCheckDispatching.length > 0) {

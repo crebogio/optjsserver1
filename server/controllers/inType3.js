@@ -18,15 +18,18 @@ const inType3 = async (req, res) => {
           for(const row of batchEntry){
               str=row.BatchNo;
           }
-          const firstRow = 60/getNoOfBuckets[0].Trans_Num_Batch;
-
-          const deletedEntry = await deleteOutgoing(transNum, transNumBatch);
-          for (let i = 0; i < firstRow; i++) {
-            const itemEntry = await entryWIP("CUTTING",user, machine, "N/A",transNum + "-" +(i+1) ,str);
-            const logEntry = await entryLogs("WIP", "CUTTING", user, machine, "N/A",transNum + "-" +(i+1), "N/A", "0.0",str);
+          const firstRow = getNoOfBuckets[0].Quantity/getNoOfBuckets[0].Trans_Num_Batch;
+          if ((firstRow > 0) &&  (firstRow <30)){
+              const deletedEntry = await deleteOutgoing(transNum, transNumBatch);
+              for (let i = 0; i < firstRow; i++) {
+                const itemEntry = await entryWIP("CUTTING",user, machine, "N/A",transNum + "-" +(i+1) ,str);
+                const logEntry = await entryLogs("WIP", "CUTTING", user, machine, "N/A",transNum + "-" +(i+1), "N/A", "0.0",str);
+              }
+              res.status(200).json({message:'Valid'}); 
           }
-
-          res.status(200).json({message:'Valid'}); 
+          else{
+               res.status(200).json({message:'Invalid Quantity or TransNumBatch'}); 
+          }
         }
         else{
           res.status(200).json({error:'not good or missing in ongoing table'});
