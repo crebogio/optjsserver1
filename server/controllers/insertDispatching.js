@@ -9,75 +9,41 @@ const insertDispatching = async (req, res) => {
   let transNumTruncated = index !== -1 ? transNum.slice(0, index) : transNum;
   
   const isPassingRheo = await checkRheoPass(transNumTruncated);
-  const isItemInOngoing = await checkOutgoingCuttingPass(transNum)
+  const isItemInOngoing = await checkOutgoingCuttingPass(transNumTruncated);
 
   const batchEntry = await getBatchNo(transNumTruncated);
   var str ='';
   for(const row of batchEntry){
     str=row.BatchNo;
   }
-    const originEntry = await getOrigin(transNumTruncated);
-    var str1 ='';
-    for(const row of originEntry){
-        str1=row.Origin;
-    }
-    var str2 = '';
-    for(const row of isItemInOngoing){
-        str2=row.KGperBuckets;
-    }
-            
-    // console.log(user);
-    // console.log(transNumTruncated);
-    // console.log(str1);
-    // console.log(str);
-    // console.log(str2);
-
-
+  const originEntry = await getOrigin(transNumTruncated);
+  var str1 ='';
+  for(const row of originEntry){
+    str1=row.Origin;
+  }
 
   if (isUserValid.length > 0) {
 
     if (isItemInOngoing.length >0){
         if (isPassingRheo.length >0){
-            // const batchEntry = await getBatchNo(transNumTruncated);
-            // var str ='';
-            // for(const row of batchEntry){
-            //     str=row.BatchNo;
-            // }
 
-            // const originEntry = await getBatchNo(transNumTruncated);
-            // var str1 ='';
-            // for(const row of originEntry){
-            //     str1=row.Origin;
-            // }
-            // var str2 = '';
-            // for(const row of isItemInOngoing){
-            //     str2=row.KGperBuckets;
-            // }
-            
-            // Console.log(user);
+            for (const row of isItemInOngoing) {
+              const str2 = row.KGperBuckets;
+              await deleteOutgoing("N/A", transNumTruncated);
+              await entryDispatching(transNumTruncated, user, str, str2, str1);
+              await entryLogs("Outgoing", "DISPATCHING", user, "N/A", "N/A", transNumTruncated, "PASS", str2, str);
+            }
 
-            // Console.log(str1);
-            // Console.log(str);
-            // Console.log(str2);
-            const deleteEntry = await deleteOutgoing("N/A",transNum);
-            const itemEntry = await entryDispatching(transNum,user,str,str2,str1);
-            const logEntry = await entryLogs("Outgoing", "DISPATCHING", user, "N/A", "N/A",transNum, "PASS", str2,str);
-
-            res.status(200).json({message:'Valid'}); 
+            res.status(200).json({message:'Valid'});
         }
         else{
-            res.status(200).json({error:'Check Rheometer Test'}); 
+            res.status(200).json({error:'Check Rheometer Test'});
         }
 
     }
     else{
         res.status(200).json({error:'Item not ready for dispatching'});
     }
-    
-
-        //const itemEntry = await entryDispatching("KNEADING",user, machine, transNum,"N/A",batchNo);
-        //const logEntry = await entryLogs("WIP", "KNEADING", user, machine, transNum,"N/A", "N/A", "0.0",batchNo);
-        
 
   }
   else{
