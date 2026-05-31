@@ -23,6 +23,10 @@ const updateRheometer = async (req, res) => {
             entryRheoLogs(transNum,user,machine,result);
             res.status(200).json({message:'valid'});
         }
+        else{
+          res.status(200).json({error:'Transnum not in plan'});
+
+        }
     }
     else{
         res.status(200).json({error:'Invalid Machine'});
