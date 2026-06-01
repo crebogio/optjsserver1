@@ -270,6 +270,7 @@ const deleteOutgoing = async(transNum,transNumBatch) => {
   return rows
 }
 
+
 const checkWIP = async(transNum,transNumBatch, process) => {
   const[rows] = await pool.query(
     "SELECT 1 FROM `opt_ctech_seiren_WIP` WHERE `TransNum` = ? AND `TransNumBatch` = ? AND `Process` = ?",
