@@ -284,6 +284,14 @@ const checkSeirenLogsHazaiRemarks = async (transNum) => {
   return rows;
 }
 
+const checkSeirenLogsTransBatch = async (transNum, batchNo) => {
+  const [rows] = await pool.query(
+    "SELECT * FROM `opt_ctech_seiren_logs` WHERE `TransNum` = ? AND `BatchNo` = ?",
+    [transNum, batchNo]
+  );
+  return rows;
+}
+
 const entryOutgoing = async (process,user, machine, transNum,transNumBatch,results,weight) => {
   const [rows] = await pool.query(
     "INSERT INTO `opt_ctech_seiren_outgoing` (`PrevProcess`, `UserID`, `MachineNumber`, `TransNum`,`TransNumBatch`,`Status`,`KGperBuckets`) VALUES (?,?,?,?,?,?,?)",
@@ -491,6 +499,7 @@ module.exports = {
   deleteRheoLogs,
   entryDispatching,
   checkSeirenLogsHazaiRemarks,
+  checkSeirenLogsTransBatch,
   getNoOfBucket,
   checkOutgoingCuttingPass,
   checkRheoPass,
