@@ -1,4 +1,4 @@
-const {deleteOutgoing,checkRheoPass,checkOutgoingCuttingPass, checkUser, getBatchNo, dbInsertSeirenLogs,entryDispatching, getOrigin} = require("../db/database");
+const {deleteOutgoing,checkRheoPass,checkOutgoingCuttingPass, checkUser, getBatchNo, dbInsertSeirenLogs,entryDispatching, checkSeirenLogsHazaiRemarks, getOrigin} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const insertDispatching = async (req, res) => {
@@ -22,6 +22,14 @@ const insertDispatching = async (req, res) => {
     str1=row.Origin;
   }
 
+  const hazaiRemarksEntry = await checkSeirenLogsHazaiRemarks(transNumTruncated);
+  var remarks = null;
+  var notes = null;
+  for(const row of hazaiRemarksEntry){
+    remarks = row.Remarks;
+    notes = row.Notes;
+  }
+
   if (isUserValid.length > 0) {
 
     if (isItemInOngoing.length >0){
@@ -30,7 +38,7 @@ const insertDispatching = async (req, res) => {
             for (const row of isItemInOngoing) {
               const str2 = row.KGperBuckets;
               await deleteOutgoing("N/A", row.TransNumBatch);
-              await entryDispatching(row.TransNumBatch, user, str, str2, str1);
+              await entryDispatching(row.TransNumBatch, user, str, str2, str1, remarks, notes);
               await dbInsertSeirenLogs("Outgoing", "DISPATCHING", user, "N/A", transNumTruncated,row.TransNumBatch , "PASS", str2, str);
             }
 

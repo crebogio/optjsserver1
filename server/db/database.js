@@ -267,13 +267,21 @@ const deleteRheoLogs = async (transNum) => {
   return rows
 }
 
-const entryDispatching = async (transNumBatch,user,batchno,weight,origin) => {
+const entryDispatching = async (transNumBatch,user,batchno,weight,origin,remarks = null,notes = null) => {
   const [rows] = await pool.query(
-    "INSERT INTO `opt_ctech_seiren_dispatching` ( `TransNumBatch`,`UserID`, `BatchNo`,`KGperBuckets`,`Origin`) VALUES (?,?,?,?,?)",
-    [transNumBatch,user,batchno,weight,origin]
+    "INSERT INTO `opt_ctech_seiren_dispatching` ( `TransNumBatch`,`UserID`, `BatchNo`,`KGperBuckets`,`Origin`,`Remarks`,`Notes`) VALUES (?,?,?,?,?,?,?)",
+    [transNumBatch,user,batchno,weight,origin,remarks,notes]
   );
 
   return rows
+}
+
+const checkSeirenLogsHazaiRemarks = async (transNum) => {
+  const [rows] = await pool.query(
+    "SELECT `Remarks`, `Notes` FROM `opt_ctech_seiren_logs` WHERE `TransNum` = ? AND `direction` = ? AND `Process` = ? AND `Remarks` = ?",
+    [transNum, "WIP", "rolling", "R"]
+  );
+  return rows;
 }
 
 const entryOutgoing = async (process,user, machine, transNum,transNumBatch,results,weight) => {
@@ -482,6 +490,7 @@ module.exports = {
   entryRheoLogs,
   deleteRheoLogs,
   entryDispatching,
+  checkSeirenLogsHazaiRemarks,
   getNoOfBucket,
   checkOutgoingCuttingPass,
   checkRheoPass,
