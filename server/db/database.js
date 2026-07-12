@@ -226,6 +226,15 @@ const entryRheoLogs = async (transNum,user, machine, result) => {
   return rows
 }
 
+const dbEntrySeirenHazai = async (transnum,process, qty) => {
+  const [rows] = await pool.query(
+    "INSERT INTO `opt_ctech_seiren_rheo_logs` (`transnum`, `process` , `qty` , `availability`) VALUES (?,?,?,?)",
+    [transnum,process, qty, "1"]
+  );
+  return rows
+}
+
+
 const deleteRheoLogs = async (transNum) => {
   const [rows] = await pool.query(
     "DELETE FROM `opt_ctech_seiren_rheo_logs` WHERE `TransNum` = ?",
@@ -454,6 +463,7 @@ module.exports = {
   checkSeikeiWIP,
   checkSeikeiOut,
   checkSeikeiWIPPaused,
+  dbEntrySeirenHazai,
   dbCheckSeikeiMachine,
   dbCheckSeikeiEmployee,
   dbCheckDispatching,
