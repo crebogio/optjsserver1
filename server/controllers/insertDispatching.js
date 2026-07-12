@@ -1,4 +1,4 @@
-const {deleteOutgoing,checkRheoPass,checkOutgoingCuttingPass, checkUser, getBatchNo, entryLogs,entryDispatching, getOrigin} = require("../db/database");
+const {deleteOutgoing,checkRheoPass,checkOutgoingCuttingPass, checkUser, getBatchNo, dbInsertSeirenLogs,entryDispatching, getOrigin} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const insertDispatching = async (req, res) => {
@@ -31,7 +31,7 @@ const insertDispatching = async (req, res) => {
               const str2 = row.KGperBuckets;
               await deleteOutgoing("N/A", row.TransNumBatch);
               await entryDispatching(row.TransNumBatch, user, str, str2, str1);
-              await entryLogs("Outgoing", "DISPATCHING", user, "N/A", transNumTruncated,row.TransNumBatch , "PASS", str2, str);
+              await dbInsertSeirenLogs("Outgoing", "DISPATCHING", user, "N/A", transNumTruncated,row.TransNumBatch , "PASS", str2, str);
             }
 
             res.status(200).json({message:'Valid'});

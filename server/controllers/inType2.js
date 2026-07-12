@@ -1,6 +1,6 @@
 // insert rolling and cutting
 
-const { checkSeirenOutgoingType2, deleteOutgoing, entryWIP, entryLogs,checkUser,checkMachine} = require("../db/database");
+const { checkSeirenOutgoingType2, deleteOutgoing, entryWIP, dbInsertSeirenLogs,checkUser,checkMachine} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const inType2 = async (req, res) => {
@@ -16,7 +16,7 @@ const inType2 = async (req, res) => {
         if (isTransNumInWIP.length !== 0) {
           const deletedEntry = await deleteOutgoing(transNum, transNumBatch)
           const itemEntry = await entryWIP(process,user, machine, transNum,transNumBatch);
-          const logEntry = await entryLogs("WIP", process, user, machine, transNum,transNumBatch, "N/A", "0.0");
+          const logEntry = await dbInsertSeirenLogs("WIP", process, user, machine, transNum,transNumBatch, "N/A", "0.0");
           res.status(200).json({message:'Valid'}); 
         }
         else{

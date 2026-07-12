@@ -1,5 +1,5 @@
 
-const { entryWIP, checkInputs, entryLogs } = require("../db/database");
+const { entryWIP, checkInputs, dbInsertSeirenLogs } = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const insertWIP = async (req, res) => {
@@ -11,7 +11,7 @@ const insertWIP = async (req, res) => {
 //   }
 
   const itemEntry = await entryWIP(process,user, machine, transNum,transNumBatch);
-  const logEntry = await entryLogs("WIP", process,user, machine, transNum,transNumBatch,"N/A","0.0");
+  const logEntry = await dbInsertSeirenLogs("WIP", process,user, machine, transNum,transNumBatch,"N/A","0.0");
   res.status(200).json({ message: `log and wip entry:`, logEntry });
 
 };

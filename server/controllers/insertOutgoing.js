@@ -1,5 +1,5 @@
 
-const { entryOutgoing, entryLogs, deleteWIP, checkWIP,checkUser,getBatchNo} = require("../db/database");
+const { entryOutgoing, dbInsertSeirenLogs, deleteWIP, checkWIP,checkUser,getBatchNo} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const insertOutgoing = async (req, res) => {
@@ -21,7 +21,7 @@ const insertOutgoing = async (req, res) => {
          
          const deletedEntry = await deleteWIP(transNum,transNumBatch);
          const itemEntry = await entryOutgoing(process,user, machine, transNum,transNumBatch,results,weight);
-         const logEntry = await entryLogs("Outgoing", process,"-", machine, transNum,transNumBatch,results,weight,str);
+         const logEntry = await dbInsertSeirenLogs("Outgoing", process,"-", machine, transNum,transNumBatch,results,weight,str);
          res.status(200).json({message:'Valid'}); 
       }
    //}
@@ -33,7 +33,7 @@ const insertOutgoing = async (req, res) => {
 module.exports = { insertOutgoing };
 
 
-// const { checkWIP, deleteWIP, entryOutgoing, entryLogs } = require("../db/database");
+// const { checkWIP, deleteWIP, entryOutgoing, dbInsertSeirenLogs } = require("../db/database");
 // const CustomError = require("../error/custom-error");
 
 // const out = async (req, res) => {
@@ -52,7 +52,7 @@ module.exports = { insertOutgoing };
 //   const itemEntry = await entryOutgoing(user_ID, process, item_number, machine_number)
 
 //   // Adds entry to Logs
-//   const logEntry = await entryLogs(`Outgoing`, user_ID, item_number, machine_number, process)
+//   const logEntry = await dbInsertSeirenLogs(`Outgoing`, user_ID, item_number, machine_number, process)
 //   res.status(200).json({ message: `product stat`, deletedEntry, itemEntry, logEntry })
 // };
 

@@ -1,6 +1,6 @@
 // insert rolling and cutting
 
-const {getBatchNo,checkSeirenPlan,entryLogs,entryRheoLogs,deleteRheoLogs,checkUser,checkMachine} = require("../db/database");
+const {getBatchNo,checkSeirenPlan,dbInsertSeirenLogs,entryRheoLogs,deleteRheoLogs,checkUser,checkMachine} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const updateRheometer = async (req, res) => {
@@ -19,7 +19,7 @@ const updateRheometer = async (req, res) => {
                 str=row.BatchNo;
             }
             deleteRheoLogs(transNum);
-            const logEntry = await entryLogs("Outgoing", "RHEOMETER", user, machine, transNum,"N/A", result, "0.0",str);
+            const logEntry = await dbInsertSeirenLogs("Outgoing", "RHEOMETER", user, machine, transNum,"N/A", result, "0.0",str);
             entryRheoLogs(transNum,user,machine,result);
             res.status(200).json({message:'valid'});
         }

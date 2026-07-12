@@ -118,7 +118,7 @@ const checkInputs = async(user_ID, machine_number, item_number) => {
 }
 
 // Logs all changes on the WIP and outgoing tables
-const entryLogs = async(direction, process,user, machine, transNum,transNumBatch,status,weight,batchno) => {
+const dbInsertSeirenLogs = async(direction, process,user, machine, transNum,transNumBatch,status,weight,batchno) => {
   const[rows] = await pool.query(
     "INSERT INTO `opt_ctech_seiren_logs` (`direction`, `Process`, `UserID`, `MachineNum`, `TransNum`, `TransNumBatch`, `Status`, `KGperBuckets`,`BatchNo`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
     [direction, process,user, machine, transNum,transNumBatch,status,weight,batchno]
@@ -127,6 +127,14 @@ const entryLogs = async(direction, process,user, machine, transNum,transNumBatch
   return rows
 }
 
+const dbInsertSeirenLogsHazai = async(direction, process,user, machine, transNum,transNumBatch,status,weight,batchno,remarks,notes) => {
+  const[rows] = await pool.query(
+    "INSERT INTO `opt_ctech_seiren_logs` (`direction`, `Process`, `UserID`, `MachineNum`, `TransNum`, `TransNumBatch`, `Status`, `KGperBuckets`,`BatchNo`,`Remarks`,`Notes`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    [direction, process,user, machine, transNum,transNumBatch,status,weight,batchno,remarks,notes]
+  );
+
+  return rows
+}
 // adds to WIP table
 const entryWIP = async (process,user, machine, transNum,transNumBatch,BatchNo) => {
   const [rows] = await pool.query(
@@ -232,6 +240,22 @@ const dbEntrySeirenHazai = async (transnum,process, qty) => {
     [transnum,process, qty, "1"]
   );
   return rows
+}
+
+const checkSeirenHazai = async (transnum) => {
+  const [rows] = await pool.query(
+    "SELECT * FROM `opt_ctech_seiren_hazai` WHERE `transnum` = ? AND `availability` = ? AND `time` >= NOW() - INTERVAL 14 DAY",
+    [transnum, "1"]
+  );
+  return rows;
+}
+
+const updateSeirenHazaiAvailability = async (transnum) => {
+  const [rows] = await pool.query(
+    "UPDATE `opt_ctech_seiren_hazai` SET `availability` = ? WHERE `transnum` = ? AND `availability` = ?",
+    ["0", transnum, "1"]
+  );
+  return rows;
 }
 
 
@@ -435,7 +459,10 @@ module.exports = {
   checkRackV1,
   checkRackV2,
   checkInputs,
-  entryLogs,
+  dbInsertSeirenLogs,
+  dbInsertSeirenLogsHazai,
+  checkSeirenHazai,
+  updateSeirenHazaiAvailability,
   entryWIP,
   checkCM,
   checkSeirenPlan,

@@ -1,7 +1,7 @@
 const express = require("express");
-const { inType1 } = require("../controllers/inType1");
+const { inRolling } = require("../controllers/inRolling");
 const router = express.Router();
 
-router.route("/").post(inType1);
+router.route("/").post(inRolling);
 
 module.exports = router;

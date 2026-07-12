@@ -1,5 +1,5 @@
 
-const { entryOutgoing, entryLogs, deleteWIP, checkWIP,checkUser,getBatchNo,dbEntrySeirenHazai} = require("../db/database");
+const { entryOutgoing, dbInsertSeirenLogs, deleteWIP, checkWIP,checkUser,getBatchNo,dbEntrySeirenHazai} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const insertSeirenHazai = async (req, res) => {
@@ -21,7 +21,7 @@ const insertSeirenHazai = async (req, res) => {
 
          const deletedEntry = await deleteWIP(transNum,transNumBatch);
          const itemEntry = await dbEntrySeirenHazai(transNumBatch,process,weight);
-         const logEntry = await entryLogs("Outgoing", process,"-", machine, transNum,transNumBatch,results,weight,str);
+         const logEntry = await dbInsertSeirenLogs("Outgoing", process,"-", machine, transNum,transNumBatch,results,weight,str);
          res.status(200).json({message:'Valid'}); 
       }
    //}

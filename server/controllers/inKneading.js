@@ -1,4 +1,4 @@
-const { checkSeirenPlan, checkSeirenWIP,checkSeirenDispatch, checkUser, checkMachine, entryWIP, entryLogs,checkMixtureTransNum, checkCM, checkBatchNo} = require("../db/database");
+const { checkSeirenPlan, checkSeirenWIP,checkSeirenDispatch, checkUser, checkMachine, entryWIP, dbInsertSeirenLogs,checkMixtureTransNum, checkCM, checkBatchNo} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const inKneading = async (req, res) => {
@@ -22,7 +22,7 @@ const inKneading = async (req, res) => {
                 //if(isCheckBatchNo.length === 0){
                   if(isCMValid.length > 0){
                     const itemEntry = await entryWIP("KNEADING",user, machine, transNum,"N/A",batchNo);
-                    const logEntry = await entryLogs("WIP", "KNEADING", user, machine, transNum,"N/A", "N/A", "0.0",batchNo);
+                    const logEntry = await dbInsertSeirenLogs("WIP", "KNEADING", user, machine, transNum,"N/A", "N/A", "0.0",batchNo);
                     res.status(200).json({message:'Valid'});
                   }
                   else{
