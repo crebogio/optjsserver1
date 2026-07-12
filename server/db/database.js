@@ -228,7 +228,7 @@ const entryRheoLogs = async (transNum,user, machine, result) => {
 
 const dbEntrySeirenHazai = async (transnum,process, qty) => {
   const [rows] = await pool.query(
-    "INSERT INTO `opt_ctech_seiren_rheo_logs` (`transnum`, `process` , `qty` , `availability`) VALUES (?,?,?,?)",
+    "INSERT INTO `opt_ctech_seiren_hazai` (`transnum`, `process` , `qty` , `availability`) VALUES (?,?,?,?)",
     [transnum,process, qty, "1"]
   );
   return rows
