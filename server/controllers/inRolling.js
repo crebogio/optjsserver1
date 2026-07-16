@@ -1,6 +1,6 @@
 // insert rolling and cutting
 
-const {getBatchNo, checkSeirenOutgoing, deleteOutgoing, entryWIP, dbInsertSeirenLogs, dbInsertSeirenLogsHazai, checkSeirenHazai, updateSeirenHazaiAvailability, checkUser,checkMachine} = require("../db/database");
+const {getBatchNo, checkSeirenOutgoing, deleteOutgoing, entryWIP, dbInsertSeirenLogs, dbInsertSeirenLogsHazai, checkSeirenHazai, updateSeirenHazaiAvailability, checkUser,checkMachine, dbGetMixtureByTransNum} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const inRolling = async (req, res) => {
@@ -29,7 +29,9 @@ const inRolling = async (req, res) => {
             const itemEntry = await entryWIP(process,user, machine, transNum,transNumBatch,str,outWeight);
             res.status(200).json({message:'Valid'});
           } else {
-            const hazaiValid = await checkSeirenHazai(hazai);
+            const mixtureRows = await dbGetMixtureByTransNum(transNum);
+            const mixture = mixtureRows.length > 0 ? mixtureRows[0].Mixture : null;
+            const hazaiValid = await checkSeirenHazai(hazai, mixture);
             if (hazaiValid.length === 0) {
               res.status(200).json({error:'Invalid hazai'});
             }
@@ -43,7 +45,7 @@ const inRolling = async (req, res) => {
                 hazaiWeight = row.qty;
               }
               const totalWeight = parseFloat(outWeight) + parseFloat(hazaiWeight);
-              const logEntry = await dbInsertSeirenLogsHazai("WIP", process, user, machine, transNum,transNumBatch, "N/A", totalWeight,str, "R", hazai);
+              const logEntry = await dbInsertSeirenLogsHazai("WIP", process, user, machine, transNum,transNumBatch, "N/A", totalWeight,str, "H", hazai);
               const deletedEntry = await deleteOutgoing(transNum, transNumBatch)
               const itemEntry = await entryWIP(process,user, machine, transNum,transNumBatch,str,totalWeight);
               const hazaiUpdate = await updateSeirenHazaiAvailability(hazai);

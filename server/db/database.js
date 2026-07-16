@@ -234,18 +234,26 @@ const entryRheoLogs = async (transNum,user, machine, result) => {
   return rows
 }
 
-const dbEntrySeirenHazai = async (transnum,process, qty) => {
+const dbEntrySeirenHazai = async (transnum,process, qty, mixture) => {
   const [rows] = await pool.query(
-    "INSERT INTO `opt_ctech_seiren_hazai` (`transnum`, `process` , `qty` , `availability`) VALUES (?,?,?,?)",
-    [transnum,process, qty, "1"]
+    "INSERT INTO `opt_ctech_seiren_hazai` (`transnum`, `process` , `qty` , `availability`, `Mixture`) VALUES (?,?,?,?,?)",
+    [transnum,process, qty, "1", mixture]
   );
   return rows
 }
 
-const checkSeirenHazai = async (transnum) => {
+const dbGetMixtureByTransNum = async (transNum) => {
   const [rows] = await pool.query(
-    "SELECT * FROM `opt_ctech_seiren_hazai` WHERE `transnum` = ? AND `availability` = ? AND `time` >= NOW() - INTERVAL 14 DAY",
-    [transnum, "1"]
+    "SELECT `Mixture` FROM `tbl_seiren_daily_sched_control` WHERE `Trans_Num` = ? LIMIT 1",
+    [transNum]
+  );
+  return rows;
+}
+
+const checkSeirenHazai = async (transnum, mixture) => {
+  const [rows] = await pool.query(
+    "SELECT * FROM `opt_ctech_seiren_hazai` WHERE `transnum` = ? AND `availability` = ? AND `Mixture` = ? AND `time` >= NOW() - INTERVAL 14 DAY",
+    [transnum, "1", mixture]
   );
   return rows;
 }
@@ -279,7 +287,7 @@ const entryDispatching = async (transNumBatch,user,batchno,weight,origin,remarks
 const checkSeirenLogsHazaiRemarks = async (transNum) => {
   const [rows] = await pool.query(
     "SELECT `Remarks`, `Notes` FROM `opt_ctech_seiren_logs` WHERE `TransNum` = ? AND `direction` = ? AND `Process` = ? AND `Remarks` = ?",
-    [transNum, "WIP", "rolling", "R"]
+    [transNum, "WIP", "rolling", "H"]
   );
   return rows;
 }
@@ -552,6 +560,7 @@ module.exports = {
   checkSeikeiOut,
   checkSeikeiWIPPaused,
   dbEntrySeirenHazai,
+  dbGetMixtureByTransNum,
   dbCheckSeikeiMachine,
   dbCheckSeikeiEmployee,
   dbCheckDispatching,

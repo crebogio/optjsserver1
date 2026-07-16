@@ -1,5 +1,5 @@
 
-const { entryOutgoing, dbInsertSeirenLogs, deleteWIP, checkWIP,checkUser,getBatchNo,dbCheckWIPTruncated,dbGetOutgoingTruncated,dbGetHazaiTruncated,dbEntrySeirenHazai} = require("../db/database");
+const { entryOutgoing, dbInsertSeirenLogs, deleteWIP, checkWIP,checkUser,getBatchNo,dbCheckWIPTruncated,dbGetOutgoingTruncated,dbGetHazaiTruncated,dbEntrySeirenHazai,dbGetMixtureByTransNum} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const insertOutgoing = async (req, res) => {
@@ -34,13 +34,16 @@ const insertOutgoing = async (req, res) => {
          const hazaiSum = existingHazai.reduce((sum, row) => sum + parseFloat(row.qty), 0);
          const newTotal = Math.round((outgoingSum + hazaiSum + parseFloat(weight)) * 100) / 100;
          if(newTotal > wipWeightTruncated){
-            res.status(200).json({error:'Total weight exceeds WIP weight', newTotal, wipWeightTruncated});
+            res.status(200).json({error:'Total weight exceeds WIP weight'});
             return;
          }
          if(results === "GOOD"){
             const itemEntry = await entryOutgoing(process,user, machine, transNum,transNumBatch,results,weight);
          } else {
-            const itemEntry = await dbEntrySeirenHazai(transNumBatch,process,weight);
+            const truncatedTransNum = transNumBatch.substring(0, lastDashIdx);
+            const mixtureRows = await dbGetMixtureByTransNum(truncatedTransNum);
+            const mixture = mixtureRows.length > 0 ? mixtureRows[0].Mixture : null;
+            const itemEntry = await dbEntrySeirenHazai(transNumBatch,process,weight,mixture);
          }
          const logEntry = await dbInsertSeirenLogs("Outgoing", process,"-", machine, transNum,transNumBatch,results,weight,str);
          if(newTotal >= wipWeightTruncated){
