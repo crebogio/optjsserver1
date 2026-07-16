@@ -20,9 +20,13 @@ const inRolling = async (req, res) => {
               str=row.BatchNo;
           }
           if (hazai === "N/A") {
+            var outWeight = 0;
+            for(const row of isTransNumInWIP){
+              outWeight = row.KGperBuckets;
+            }
             const logEntry = await dbInsertSeirenLogs("WIP", process, user, machine, transNum,transNumBatch, "N/A", "0.0",str);
             const deletedEntry = await deleteOutgoing(transNum, transNumBatch)
-            const itemEntry = await entryWIP(process,user, machine, transNum,transNumBatch,str);
+            const itemEntry = await entryWIP(process,user, machine, transNum,transNumBatch,str,outWeight);
             res.status(200).json({message:'Valid'});
           } else {
             const hazaiValid = await checkSeirenHazai(hazai);
@@ -30,9 +34,18 @@ const inRolling = async (req, res) => {
               res.status(200).json({error:'Invalid hazai'});
             }
             else {
+              var outWeight = 0;
+              for(const row of isTransNumInWIP){
+                outWeight = row.KGperBuckets;
+              }
+              var hazaiWeight = 0;
+              for(const row of hazaiValid){
+                hazaiWeight = row.qty;
+              }
+              const totalWeight = parseFloat(outWeight) + parseFloat(hazaiWeight);
               const logEntry = await dbInsertSeirenLogsHazai("WIP", process, user, machine, transNum,transNumBatch, "N/A", "0.0",str, "R", hazai);
               const deletedEntry = await deleteOutgoing(transNum, transNumBatch)
-              const itemEntry = await entryWIP(process,user, machine, transNum,transNumBatch,str);
+              const itemEntry = await entryWIP(process,user, machine, transNum,transNumBatch,str,totalWeight);
               const hazaiUpdate = await updateSeirenHazaiAvailability(hazai);
               res.status(200).json({message:'Valid'});
             }

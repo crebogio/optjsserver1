@@ -23,7 +23,11 @@ const inKneading = async (req, res) => {
                 //if(isCheckBatchNo.length === 0){
                   if(isCMValid.length > 0){
                     if(isTransBatchInLogs.length === 0){
-                      const itemEntry = await entryWIP("KNEADING",user, machine, transNum,"N/A",batchNo);
+                      var qty = 0;
+                      for(const row of isTransNumInPlan){
+                        qty = row.Quantity;
+                      }
+                      const itemEntry = await entryWIP("KNEADING",user, machine, transNum,"N/A",batchNo,qty);
                       const logEntry = await dbInsertSeirenLogs("WIP", "KNEADING", user, machine, transNum,"N/A", "N/A", "0.0",batchNo);
                       res.status(200).json({message:'Valid'});
                     }

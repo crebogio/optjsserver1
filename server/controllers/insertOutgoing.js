@@ -1,33 +1,37 @@
 
-const { entryOutgoing, dbInsertSeirenLogs, deleteWIP, checkWIP,checkUser,getBatchNo} = require("../db/database");
+const { entryOutgoing, dbInsertSeirenLogs, deleteWIP, checkWIP,checkUser,getBatchNo,dbCheckWIPTruncated} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const insertOutgoing = async (req, res) => {
    const { process, user, machine, transNum, transNumBatch, results, weight} = req.body; 
 
    const validity =  await checkWIP(transNum, transNumBatch, process);
-   //const isUserValid = await checkUser(user);
+   const validityTruncated =  await dbCheckWIPTruncated(transNumBatch, process);
+   const batchEntry = await getBatchNo(transNum);
+   var str ='';
+   for(const row of batchEntry){
+      str=row.BatchNo;
+   }
+   if(process === "CUTTING"){
+       if(validityTruncated.length === 0){
+         res.status(200).json({error:'Invalid not found in WIP'}); 
+      }
+      else{
 
-   //if (isUserValid.length > 0) {
+      }
+
+   }else{
       if(validity.length === 0){
          res.status(200).json({error:'Invalid not found in WIP'}); 
       }
       else{
-         const batchEntry = await getBatchNo(transNum);
-         var str ='';
-         for(const row of batchEntry){
-            str=row.BatchNo;
-         }
-         
+         const wipWeight = validity[0].weight;
          const deletedEntry = await deleteWIP(transNum,transNumBatch);
-         const itemEntry = await entryOutgoing(process,user, machine, transNum,transNumBatch,results,weight);
-         const logEntry = await dbInsertSeirenLogs("Outgoing", process,"-", machine, transNum,transNumBatch,results,weight,str);
-         res.status(200).json({message:'Valid'}); 
+         const itemEntry = await entryOutgoing(process,user, machine, transNum,transNumBatch,results,wipWeight);
+         const logEntry = await dbInsertSeirenLogs("Outgoing", process,"-", machine, transNum,transNumBatch,results,wipWeight,str);
+         res.status(200).json({message:'Valid'});
       }
-   //}
-   //else{
-   //   res.status(200).json({error:'Invalid User'});
-   //}  
+   }
 };
 
 module.exports = { insertOutgoing };

@@ -136,10 +136,10 @@ const dbInsertSeirenLogsHazai = async(direction, process,user, machine, transNum
   return rows
 }
 // adds to WIP table
-const entryWIP = async (process,user, machine, transNum,transNumBatch,BatchNo) => {
+const entryWIP = async (process,user, machine, transNum,transNumBatch,BatchNo,weight) => {
   const [rows] = await pool.query(
-    "INSERT INTO `opt_ctech_seiren_WIP` (`Process`, `UserID`, `MachineNumber`,`TransNum`, `TransNumBatch`,`BatchNo`) VALUES (?,?,?,?,?,?)",
-    [process,user, machine, transNum,transNumBatch,BatchNo]
+    "INSERT INTO `opt_ctech_seiren_WIP` (`Process`, `UserID`, `MachineNumber`,`TransNum`, `TransNumBatch`,`BatchNo`,`weight`) VALUES (?,?,?,?,?,?,?)",
+    [process,user, machine, transNum,transNumBatch,BatchNo,weight]
   );
 
   return rows
@@ -322,8 +322,19 @@ const deleteOutgoing = async(transNum,transNumBatch) => {
 
 const checkWIP = async(transNum,transNumBatch, process) => {
   const[rows] = await pool.query(
-    "SELECT 1 FROM `opt_ctech_seiren_WIP` WHERE `TransNum` = ? AND `TransNumBatch` = ? AND `Process` = ?",
+    "SELECT `weight` FROM `opt_ctech_seiren_WIP` WHERE `TransNum` = ? AND `TransNumBatch` = ? AND `Process` = ?",
     [transNum,transNumBatch, process]
+  );
+  return rows
+}
+
+
+const dbCheckWIPTruncated = async(transNumBatch, process) => {
+  const lastDashIdx = transNumBatch.lastIndexOf('-');
+  const truncatedBatch = lastDashIdx === -1 ? transNumBatch : transNumBatch.substring(0, lastDashIdx);
+  const[rows] = await pool.query(
+    "SELECT 1 FROM `opt_ctech_seiren_WIP` WHERE `TransNum` = ? AND `Process` = ?",
+    [truncatedBatch, process]
   );
   return rows
 }
@@ -501,6 +512,7 @@ module.exports = {
   deleteWIP,
   deleteOutgoing,
   checkWIP,
+  dbCheckWIPTruncated,
   checkMixtureTransNum,
   getOrigin, 
   getBatchNo,

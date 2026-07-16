@@ -3,7 +3,7 @@
 const {getBatchNo,getNoOfBucket, checkSeirenOutgoing, deleteOutgoing, entryWIP, dbInsertSeirenLogs,checkUser,checkMachine,checkSeirenPlan} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
-const inType3 = async (req, res) => {
+const inCutting = async (req, res) => {
   const { process, user, machine, transNum, transNumBatch  } = req.body;
   
   const isTransNumInWIP = await checkSeirenOutgoing(transNum);
@@ -18,18 +18,11 @@ const inType3 = async (req, res) => {
           for(const row of batchEntry){
               str=row.BatchNo;
           }
-          const firstRow = getNoOfBuckets[0].Quantity/getNoOfBuckets[0].Trans_Num_Batch;
-          if ((firstRow > 0) &&  (firstRow <30)){
-              const deletedEntry = await deleteOutgoing(transNum, transNumBatch);
-              for (let i = 0; i < firstRow; i++) {
-                const itemEntry = await entryWIP("CUTTING",user, machine, "N/A",transNum + "-" +(i+1) ,str);
-                const logEntry = await dbInsertSeirenLogs("WIP", "CUTTING", user, machine, "N/A",transNum + "-" +(i+1), "N/A", "0.0",str);
-              }
-              res.status(200).json({message:'Valid'}); 
-          }
-          else{
-               res.status(200).json({message:'Invalid Quantity or TransNumBatch'}); 
-          }
+          const outWeight = isTransNumInWIP[0].KGperBuckets;
+          const deletedEntry = await deleteOutgoing(transNum, transNumBatch);
+          const itemEntry = await entryWIP("CUTTING",user, machine, transNum,"N/A" ,str,outWeight);
+          const logEntry = await dbInsertSeirenLogs("WIP", "CUTTING", user, machine, transNum,"N/A", "N/A", "0.0",str);
+          res.status(200).json({message:'Valid'});
         }
         else{
           res.status(200).json({error:'not good or missing in ongoing table'});
@@ -44,4 +37,4 @@ const inType3 = async (req, res) => {
   }  
 }
 
-module.exports = { inType3 };
+module.exports = { inCutting };

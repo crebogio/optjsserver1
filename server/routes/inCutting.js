@@ -1,7 +1,7 @@
 const express = require("express");
-const { insertWIP } = require("../controllers/insertWIP");
+const { inCutting } = require("../controllers/inCutting");
 const router = express.Router();
 
-router.route("/").post(insertWIP);
+router.route("/").post(inCutting);
 
 module.exports = router;
