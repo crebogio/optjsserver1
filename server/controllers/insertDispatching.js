@@ -38,7 +38,7 @@ const insertDispatching = async (req, res) => {
             for (const row of isItemInOngoing) {
               const str2 = row.KGperBuckets;
               await deleteOutgoing("N/A", row.TransNumBatch);
-              await entryDispatching(row.TransNumBatch, user, str , str2, str1, " ", notes);
+              await entryDispatching(row.TransNumBatch, user, str , str2, str1, remarks, notes);
               await dbInsertSeirenLogs("Outgoing", "DISPATCHING", user, "N/A", transNumTruncated,row.TransNumBatch , "PASS", str2, str);
             }
 
