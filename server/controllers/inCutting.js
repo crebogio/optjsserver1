@@ -21,7 +21,7 @@ const inCutting = async (req, res) => {
           const outWeight = isTransNumInWIP[0].KGperBuckets;
           const deletedEntry = await deleteOutgoing(transNum, transNumBatch);
           const itemEntry = await entryWIP("CUTTING",user, machine, transNum,"N/A" ,str,outWeight);
-          const logEntry = await dbInsertSeirenLogs("WIP", "CUTTING", user, machine, transNum,"N/A", "N/A", "0.0",str);
+          const logEntry = await dbInsertSeirenLogs("WIP", "CUTTING", user, machine, transNum,"N/A", "N/A", outWeight,str);
           res.status(200).json({message:'Valid'});
         }
         else{
