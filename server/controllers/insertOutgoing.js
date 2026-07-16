@@ -44,7 +44,9 @@ const insertOutgoing = async (req, res) => {
          }
          const logEntry = await dbInsertSeirenLogs("Outgoing", process,"-", machine, transNum,transNumBatch,results,weight,str);
          if(newTotal >= wipWeightTruncated){
-            await deleteWIP(transNum,"N/A");
+            const truncatedBatch = transNumBatch.substring(0, lastDashIdx);
+            await deleteWIP(truncatedBatch, "N/A");
+
          }
          res.status(200).json({message:'Valid'});
       }
