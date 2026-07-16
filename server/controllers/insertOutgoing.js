@@ -25,7 +25,7 @@ const insertOutgoing = async (req, res) => {
          const suffix = parseInt(transNumBatch.substring(lastDashIdx + 1), 10);
          const existingOutgoing = await dbGetOutgoingTruncated(transNumBatch, process);
          const existingHazai = await dbGetHazaiTruncated(transNumBatch, process);
-         if(suffix !== existingOutgoing.length + existingHazai.length + 1){
+         if(suffix !== existingOutgoing.length + 1){
             res.status(200).json({error:'Scan consecutive buckets'});
             return;
          }
