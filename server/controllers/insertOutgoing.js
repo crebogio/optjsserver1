@@ -13,7 +13,11 @@ const insertOutgoing = async (req, res) => {
       str=row.BatchNo;
    }
    if(process === "CUTTING"){
-       if(validityTruncated.length === 0){
+      if(parseFloat(weight) === 0){
+         res.status(200).json({error:'Weight cannot be zero'});
+         return;
+      }
+      if(validityTruncated.length === 0){
          res.status(200).json({error:'Invalid not found in WIP'});
       }
       else{
@@ -28,7 +32,7 @@ const insertOutgoing = async (req, res) => {
          const wipWeightTruncated = parseFloat(validityTruncated[0].weight);
          const outgoingSum = existingOutgoing.reduce((sum, row) => sum + parseFloat(row.KGperBuckets), 0);
          const hazaiSum = existingHazai.reduce((sum, row) => sum + parseFloat(row.qty), 0);
-         const newTotal = outgoingSum + hazaiSum + parseFloat(weight);
+         const newTotal = Math.round((outgoingSum + hazaiSum + parseFloat(weight)) * 100) / 100;
          if(newTotal > wipWeightTruncated){
             res.status(200).json({error:'Total weight exceeds WIP weight'});
             return;

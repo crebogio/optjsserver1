@@ -28,7 +28,7 @@ const inKneading = async (req, res) => {
                         qty = row.Quantity;
                       }
                       const itemEntry = await entryWIP("KNEADING",user, machine, transNum,"N/A",batchNo,qty);
-                      const logEntry = await dbInsertSeirenLogs("WIP", "KNEADING", user, machine, transNum,"N/A", "N/A", "0.0",batchNo);
+                      const logEntry = await dbInsertSeirenLogs("WIP", "KNEADING", user, machine, transNum,"N/A", "N/A", qty,batchNo);
                       res.status(200).json({message:'Valid'});
                     }
                     else{
