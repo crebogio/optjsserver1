@@ -333,7 +333,27 @@ const dbCheckWIPTruncated = async(transNumBatch, process) => {
   const lastDashIdx = transNumBatch.lastIndexOf('-');
   const truncatedBatch = lastDashIdx === -1 ? transNumBatch : transNumBatch.substring(0, lastDashIdx);
   const[rows] = await pool.query(
-    "SELECT 1 FROM `opt_ctech_seiren_WIP` WHERE `TransNum` = ? AND `Process` = ?",
+    "SELECT `weight` FROM `opt_ctech_seiren_WIP` WHERE `TransNum` = ? AND `Process` = ?",
+    [truncatedBatch, process]
+  );
+  return rows
+}
+
+const dbGetOutgoingTruncated = async(transNumBatch, process) => {
+  const lastDashIdx = transNumBatch.lastIndexOf('-');
+  const truncatedBatch = lastDashIdx === -1 ? transNumBatch : transNumBatch.substring(0, lastDashIdx);
+  const[rows] = await pool.query(
+    "SELECT `TransNumBatch`, `KGperBuckets` FROM `opt_ctech_seiren_outgoing` WHERE `TransNumBatch` LIKE CONCAT(?, '-%') AND `PrevProcess` = ?",
+    [truncatedBatch, process]
+  );
+  return rows
+}
+
+const dbGetHazaiTruncated = async(transNumBatch, process) => {
+  const lastDashIdx = transNumBatch.lastIndexOf('-');
+  const truncatedBatch = lastDashIdx === -1 ? transNumBatch : transNumBatch.substring(0, lastDashIdx);
+  const[rows] = await pool.query(
+    "SELECT `transnum`, `qty` FROM `opt_ctech_seiren_hazai` WHERE `transnum` LIKE CONCAT(?, '-%') AND `process` = ?",
     [truncatedBatch, process]
   );
   return rows
@@ -513,6 +533,8 @@ module.exports = {
   deleteOutgoing,
   checkWIP,
   dbCheckWIPTruncated,
+  dbGetOutgoingTruncated,
+  dbGetHazaiTruncated,
   checkMixtureTransNum,
   getOrigin, 
   getBatchNo,

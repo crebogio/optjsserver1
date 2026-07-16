@@ -1,5 +1,5 @@
 
-const { entryOutgoing, dbInsertSeirenLogs, deleteWIP, checkWIP,checkUser,getBatchNo,dbCheckWIPTruncated} = require("../db/database");
+const { entryOutgoing, dbInsertSeirenLogs, deleteWIP, checkWIP,checkUser,getBatchNo,dbCheckWIPTruncated,dbGetOutgoingTruncated,dbGetHazaiTruncated,dbEntrySeirenHazai} = require("../db/database");
 const CustomError = require("../error/custom-error");
 
 const insertOutgoing = async (req, res) => {
@@ -14,10 +14,35 @@ const insertOutgoing = async (req, res) => {
    }
    if(process === "CUTTING"){
        if(validityTruncated.length === 0){
-         res.status(200).json({error:'Invalid not found in WIP'}); 
+         res.status(200).json({error:'Invalid not found in WIP'});
       }
       else{
-
+         const lastDashIdx = transNumBatch.lastIndexOf('-');
+         const suffix = parseInt(transNumBatch.substring(lastDashIdx + 1), 10);
+         const existingOutgoing = await dbGetOutgoingTruncated(transNumBatch, process);
+         const existingHazai = await dbGetHazaiTruncated(transNumBatch, process);
+         if(suffix !== existingOutgoing.length + existingHazai.length + 1){
+            res.status(200).json({error:'Scan consecutive buckets'});
+            return;
+         }
+         const wipWeightTruncated = parseFloat(validityTruncated[0].weight);
+         const outgoingSum = existingOutgoing.reduce((sum, row) => sum + parseFloat(row.KGperBuckets), 0);
+         const hazaiSum = existingHazai.reduce((sum, row) => sum + parseFloat(row.qty), 0);
+         const newTotal = outgoingSum + hazaiSum + parseFloat(weight);
+         if(newTotal > wipWeightTruncated){
+            res.status(200).json({error:'Total weight exceeds WIP weight'});
+            return;
+         }
+         if(results === "GOOD"){
+            const itemEntry = await entryOutgoing(process,user, machine, transNum,transNumBatch,results,weight);
+         } else {
+            const itemEntry = await dbEntrySeirenHazai(transNumBatch,process,weight);
+         }
+         const logEntry = await dbInsertSeirenLogs("Outgoing", process,"-", machine, transNum,transNumBatch,results,weight,str);
+         if(newTotal >= wipWeightTruncated){
+            await deleteWIP(transNum,"N/A");
+         }
+         res.status(200).json({message:'Valid'});
       }
 
    }else{
