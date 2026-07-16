@@ -26,6 +26,7 @@ const  inSeikei  = require("./routes/inSeikei");
 const  insertSeikeiWip  = require("./routes/insertSeikeiWip");
 const insertSeikeiOut  = require("./routes/insertSeikeiOut");
 const getSeikeiWip = require("./routes/getSeikeiWip");
+const myTest = require("./routes/myTest");
 require("express-async-errors");
 require("dotenv").config();
 
@@ -64,6 +65,7 @@ app.use("/api/v2/inSeikei", inSeikei);
 app.use("/api/v2/insertSeikeiWip", insertSeikeiWip);
 app.use("/api/v2/insertSeikeiOut", insertSeikeiOut);
 app.use("/api/v2/getSeikeiWip", getSeikeiWip);
+app.use("/api/v3/myTest", myTest);
 app.use(notFound);
 app.use(errorHandler);
 

@@ -462,7 +462,16 @@ const dbGetSeikeiWip = async (ctrl_no) => {
 //   return rows
 // }
 
+const dbMyTest = async (ctrl_no) => {
+  const [rows] = await pool.query(
+    "SELECT * FROM `tboperatorlist` WHERE `id` = ?",
+    [ctrl_no]
+  );
+  return rows
+}
+
 module.exports = {
+  
   getRacks,
   getRack,
   getUser,
@@ -515,5 +524,6 @@ module.exports = {
   dbInsertSeikeiWip,
   dbDeleteSeikeiWip,
   dbInsertSeikeiOut,
-  dbGetSeikeiWip
+  dbGetSeikeiWip,
+  dbMyTest
 };
