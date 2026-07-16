@@ -34,7 +34,7 @@ const insertOutgoing = async (req, res) => {
          const hazaiSum = existingHazai.reduce((sum, row) => sum + parseFloat(row.qty), 0);
          const newTotal = Math.round((outgoingSum + hazaiSum + parseFloat(weight)) * 100) / 100;
          if(newTotal > wipWeightTruncated){
-            res.status(200).json({error:'Total weight exceeds WIP weight'});
+            res.status(200).json({error:'Total weight exceeds WIP weight', newTotal, wipWeightTruncated});
             return;
          }
          if(results === "GOOD"){
