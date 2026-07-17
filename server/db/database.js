@@ -361,8 +361,8 @@ const dbGetHazaiTruncated = async(transNumBatch, process) => {
   const lastDashIdx = transNumBatch.lastIndexOf('-');
   const truncatedBatch = lastDashIdx === -1 ? transNumBatch : transNumBatch.substring(0, lastDashIdx);
   const[rows] = await pool.query(
-    "SELECT `transnum`, `qty` FROM `opt_ctech_seiren_hazai` WHERE `transnum` LIKE CONCAT(?, '-%') AND `process` = ?",
-    [truncatedBatch, process]
+    "SELECT `transnum`, `qty` FROM `opt_ctech_seiren_hazai` WHERE `transnum` LIKE CONCAT(?, '-%') AND `process` = ? AND `availability` = ?",
+    [truncatedBatch, process, "1"]
   );
   return rows
 }
